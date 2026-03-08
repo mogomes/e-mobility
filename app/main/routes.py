@@ -16,6 +16,7 @@ def serialize_scooter_map(scooter: Scooter) -> dict:
         'longitude': float(scooter.longitude),
         'status': scooter.status,
         'battery_level': scooter.battery_level,
+        'unlock_code': scooter.unlock_code,
     }
 
 

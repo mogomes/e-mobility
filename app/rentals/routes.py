@@ -13,8 +13,9 @@ rentals_bp = Blueprint('rentals', __name__)
 @login_required
 def start(scooter_id):
     scooter = db.get_or_404(Scooter, scooter_id)
+    unlock_code = request.form.get('unlock_code', '').strip()
     try:
-        start_rental(current_user, scooter)
+        start_rental(current_user, scooter, unlock_code=unlock_code)
         flash('Scooter erfolgreich entriegelt und Ausleihe gestartet.', 'success')
     except ValueError as exc:
         flash(str(exc), 'danger')

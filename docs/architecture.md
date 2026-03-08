@@ -101,13 +101,14 @@ sequenceDiagram
     participant BrowserOrAPI as Browser/API
     participant Flask as Flask Service Layer
     participant DB
-    Rider->>BrowserOrAPI: Start Ausleihe
-    BrowserOrAPI->>Flask: POST /rentals/start/<id>
+    Rider->>BrowserOrAPI: QR-Code scannen + Ausleihe starten
+    BrowserOrAPI->>Flask: POST /rentals/start/<id> {unlock_code}
     Flask->>DB: Verfügbarkeit Scooter prüfen
+    Flask->>DB: Unlock-Code gegen Scooter.unlock_code validieren
     Flask->>DB: Prüfen aktive Ausleihe / Zahlungsmittel
     Flask->>DB: Rental anlegen, Scooter auf rented setzen
     DB-->>Flask: OK
-    Flask-->>BrowserOrAPI: Erfolgsmeldung
+    Flask-->>BrowserOrAPI: Erfolgsmeldung (201)
 ```
 
 ### Rückgabe und Verrechnung

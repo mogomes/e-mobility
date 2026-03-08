@@ -423,6 +423,31 @@ button.danger:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
 .battery-bar-fill.low      { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .battery-bar-fill.critical { background: linear-gradient(90deg, #ef4444, #f87171); }
 
+/* === QR CODE === */
+.qr-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+  margin: .85rem 0 .5rem;
+  padding: .75rem;
+  background: var(--slate-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.qr-wrapper .qr-code img,
+.qr-wrapper .qr-code canvas {
+  display: block;
+  border-radius: 4px;
+}
+.qr-label {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin: 0;
+}
+
 /* === EMPTY CARD === */
 .empty-card {
   display: flex;

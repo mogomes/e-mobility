@@ -95,7 +95,6 @@ def seed_demo_data() -> None:
         rider.payment_method = 'Visa **** 4242'
 
     _ensure_bern_scooters(provider.id)
-    _relocate_legacy_scooters_to_bern(provider.id)
     db.session.flush()
 
     if Rental.query.count() == 0:
@@ -122,21 +121,14 @@ def seed_demo_data() -> None:
 
 
 def _ensure_bern_scooters(provider_id: int) -> None:
-    for scooter_data in BERN_SCOOTERS:
-        scooter = Scooter.query.filter_by(public_id=scooter_data['public_id']).first()
-        if scooter is None:
-            scooter = Scooter(provider_id=provider_id, **scooter_data)
-            db.session.add(scooter)
-            continue
+    # Alle bestehenden Ausleihen und Roller löschen und neu anlegen
+    Rental.query.delete()
+    Scooter.query.delete()
+    db.session.flush()
 
-        scooter.name = scooter_data['name']
-        scooter.battery_level = scooter_data['battery_level']
-        scooter.latitude = scooter_data['latitude']
-        scooter.longitude = scooter_data['longitude']
-        scooter.unlock_code = scooter_data['unlock_code']
-        scooter.provider_id = provider_id
-        if scooter.status != ScooterStatus.RENTED.value:
-            scooter.status = scooter_data['status']
+    for scooter_data in BERN_SCOOTERS:
+        scooter = Scooter(provider_id=provider_id, **scooter_data)
+        db.session.add(scooter)
 
 
 
@@ -153,13 +145,15 @@ def _relocate_legacy_scooters_to_bern(provider_id: int) -> None:
         if scooter.status != ScooterStatus.RENTED.value:
             scooter.status = ScooterStatus.AVAILABLE.value
 
-def start_rental(user: User, scooter: Scooter) -> Rental:
+def start_rental(user: User, scooter: Scooter, unlock_code: str | None = None) -> Rental:
     if user.role != UserRole.RIDER.value:
         raise ValueError('Nur Fahrgäste dürfen Fahrzeuge ausleihen.')
     if not user.payment_method:
         raise ValueError('Bitte zuerst ein Zahlungsmittel hinterlegen.')
     if scooter.status != ScooterStatus.AVAILABLE.value:
         raise ValueError('Roller ist derzeit nicht verfügbar.')
+    if unlock_code is None or unlock_code.strip() != scooter.unlock_code:
+        raise ValueError('Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Roller scannen.')
     active_rental = Rental.query.filter_by(rider_id=user.id, status=RentalStatus.ACTIVE.value).first()
     if active_rental:
         raise ValueError('Es existiert bereits eine aktive Ausleihe.')

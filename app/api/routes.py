@@ -61,6 +61,24 @@ def scooters():
     return jsonify([serialize_scooter(s) for s in scooters])
 
 
+@api_bp.route('/scooters/<int:scooter_id>', methods=['GET'])
+def scooter_detail(scooter_id):
+    scooter = db.get_or_404(Scooter, scooter_id)
+    return jsonify(serialize_scooter(scooter))
+
+
+@api_bp.route('/provider/scooters', methods=['GET'])
+def provider_scooters():
+    """Listet alle Scooter des authentifizierten Anbieters auf."""
+    user = api_user_from_request()
+    if not user:
+        return jsonify({'error': 'missing_or_invalid_token'}), 401
+    if user.role != 'provider':
+        return jsonify({'error': 'forbidden – nur für Anbieter'}), 403
+    own = Scooter.query.filter_by(provider_id=user.id).order_by(Scooter.id.asc()).all()
+    return jsonify([serialize_scooter(s) for s in own])
+
+
 @api_bp.route('/rentals', methods=['GET'])
 def rentals():
     user = api_user_from_request()
@@ -81,8 +99,10 @@ def rentals_start(scooter_id):
         return jsonify({'error': 'missing_or_invalid_token'}), 401
 
     scooter = db.get_or_404(Scooter, scooter_id)
+    data = request.get_json(silent=True) or {}
+    unlock_code = data.get('unlock_code', '').strip()
     try:
-        rental = start_rental(user, scooter)
+        rental = start_rental(user, scooter, unlock_code=unlock_code)
         return jsonify({'message': 'rental_started', 'rental': serialize_rental(rental)}), 201
     except ValueError as exc:
         return jsonify({'error': str(exc)}), 400

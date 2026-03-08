@@ -45,8 +45,17 @@
       <h3>{{ scooter.name }}</h3>
       <p><strong>Kennung:</strong> {{ scooter.public_id }}</p>
       <p><strong>Koordinaten:</strong> {{ scooter.latitude }}, {{ scooter.longitude }}</p>
+      {% if scooter.status == 'available' %}
+      <div class="qr-wrapper">
+        <div class="qr-code" id="qr-{{ scooter.id }}"></div>
+        <p class="qr-label">{{ scooter.unlock_code }}</p>
+      </div>
+      {% endif %}
       {% if current_user.role == 'rider' and scooter.status == 'available' %}
       <form method="post" action="{{ url_for('rentals.start', scooter_id=scooter.id) }}" style="margin-top:.75rem">
+        <label>QR-Code / Entriegelungscode
+          <input type="text" name="unlock_code" placeholder="z. B. QR-3001" required autocomplete="off">
+        </label>
         <button type="submit">Jetzt ausleihen</button>
       </form>
       {% endif %}
@@ -111,6 +120,13 @@
       L.marker([roller.latitude, roller.longitude])
         .addTo(uebersichtskarte)
         .bindPopup(`<strong>${roller.name}</strong><br>${roller.public_id}<br>Akku: ${roller.battery_level}%`);
+    }
+  });
+
+  uebersichtsDaten.forEach((roller) => {
+    if (roller.status === 'available') {
+      const el = document.getElementById('qr-' + roller.id);
+      if (el) new QRCode(el, { text: roller.unlock_code, width: 120, height: 120, colorDark: '#0f172a', colorLight: '#ffffff' });
     }
   });
 </script>
