@@ -131,7 +131,8 @@ sequenceDiagram
     Flask->>Flask: unlock_code validieren
     Flask->>DB: Aktive Ausleihe des Fahrgasts prüfen
     Flask->>DB: Zahlungsmittel prüfen
-    Flask->>DB: Rental anlegen; Scooter.status = rented
+    Flask->>DB: Rental anlegen
+    Flask->>DB: Scooter.status = rented
     DB-->>Flask: OK
     Flask-->>Client: 201 Created / Flash-Erfolgsmeldung
 ```
