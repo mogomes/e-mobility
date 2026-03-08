@@ -112,7 +112,7 @@ sequenceDiagram
     else OK
         Flask->>DB: Neuen User speichern (Passwort als Hash)
         DB-->>Flask: OK
-        Flask-->>Browser: Redirect → /auth/login
+        Flask-->>Browser: Redirect zu /auth/login
     end
 ```
 
@@ -131,7 +131,7 @@ sequenceDiagram
     Flask->>Flask: unlock_code validieren
     Flask->>DB: Aktive Ausleihe des Fahrgasts prüfen
     Flask->>DB: Zahlungsmittel prüfen
-    Flask->>DB: Rental anlegen; Scooter.status → rented
+    Flask->>DB: Rental anlegen; Scooter.status = rented
     DB-->>Flask: OK
     Flask-->>Client: 201 Created / Flash-Erfolgsmeldung
 ```
