@@ -140,15 +140,15 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    A[Ausleihe aktiv] --> B[Enddaten empfangen\nend_km · latitude · longitude]
-    B --> C{Validierung\nend_km ≥ start_km?\nKoordinaten gültig?}
-    C -- Fehler --> D[ValueError → 400 / Flash]
+    A[Ausleihe aktiv] --> B[Enddaten empfangen]
+    B --> C{end_km >= start_km?}
+    C -- Fehler --> D[ValueError 400 / Flash]
     C -- OK --> E[end_time = jetzt]
-    E --> F[Fahrtdauer berechnen\nmax 1 Minute]
-    F --> G[Gesamtpreis berechnen\n1.50 + 0.35 × Minuten]
-    G --> H[Distanz berechnen\nend_km − start_km]
-    H --> I[Scooter-Standort aktualisieren\nStatus → available]
-    I --> J[Rental.status → completed\nIn DB speichern]
+    E --> F[Fahrtdauer berechnen]
+    F --> G["Preis: 1.50 + 0.35 x Minuten"]
+    G --> H["Distanz: end_km - start_km"]
+    H --> I[Scooter-Standort aktualisieren]
+    I --> J[Rental.status = completed]
     J --> K[Antwort an Client]
 ```
 
@@ -158,19 +158,19 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    Client[Browser oder\nAPI-Client]
+    Client[Browser / API-Client]
 
-    subgraph Option A – Docker Compose
-        Nginx_A[Nginx\noptional]
-        Gunicorn_A[Gunicorn\nFlask App\nPort 8000]
-        DB_A[(PostgreSQL\nDocker-Container)]
+    subgraph DockerCompose["Option A: Docker Compose"]
+        Nginx_A[Nginx optional]
+        Gunicorn_A[Gunicorn Flask Port 8000]
+        DB_A[(PostgreSQL Container)]
         Client --> Nginx_A --> Gunicorn_A --> DB_A
     end
 
-    subgraph Option B – bare metal / VPS
-        Nginx_B[Nginx\nPort 80/443]
-        Gunicorn_B[Gunicorn\nsystemd-Dienst\nPort 127.0.0.1:8000]
-        DB_B[(PostgreSQL\nauf Server)]
+    subgraph BareMetal["Option B: bare metal / VPS"]
+        Nginx_B[Nginx Port 80/443]
+        Gunicorn_B[Gunicorn systemd Port 8000]
+        DB_B[(PostgreSQL auf Server)]
         Client --> Nginx_B --> Gunicorn_B --> DB_B
     end
 ```
