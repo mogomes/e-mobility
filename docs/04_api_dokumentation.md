@@ -49,13 +49,13 @@ curl -X POST http://YOUR_HOST/api/token \
 
 ---
 
-### GET /api/scooters
+### GET /api/vehicles
 
-Alle Scooter auflisten. Kein Token erforderlich.
+Alle Fahrzeuge auflisten. Kein Token erforderlich.
 
 **Request:**
 ```bash
-curl http://YOUR_HOST/api/scooters
+curl http://YOUR_HOST/api/vehicles
 ```
 
 **Erfolg (200 OK):**
@@ -88,13 +88,13 @@ curl http://YOUR_HOST/api/scooters
 
 ---
 
-### GET /api/scooters/\<scooter\_id\>
+### GET /api/vehicles/\<vehicle\_id\>
 
-Detaildaten eines einzelnen Scooters abrufen. Kein Token erforderlich.
+Detaildaten eines einzelnen Fahrzeugs abrufen. Kein Token erforderlich.
 
 **Request:**
 ```bash
-curl http://YOUR_HOST/api/scooters/1
+curl http://YOUR_HOST/api/vehicles/1
 ```
 
 **Erfolg (200 OK):**
@@ -118,19 +118,19 @@ curl http://YOUR_HOST/api/scooters/1
 
 ---
 
-### GET /api/provider/scooters 🔒
+### GET /api/provider/vehicles 🔒
 
-Alle Scooter des angemeldeten Anbieters abrufen. Nur für Benutzer mit der Rolle `provider`.
+Alle Fahrzeuge des angemeldeten Anbieters abrufen. Nur für Benutzer mit der Rolle `provider`.
 
 **Request:**
 ```bash
-curl http://YOUR_HOST/api/provider/scooters \
+curl http://YOUR_HOST/api/provider/vehicles \
   -H "Authorization: Bearer <provider_token>"
 ```
 
-**Erfolg (200 OK):** Liste der eigenen Scooter (gleiches Format wie `/api/scooters`)
+**Erfolg (200 OK):** Liste der eigenen Fahrzeuge (gleiches Format wie `/api/vehicles`)
 
-**Fehler (401):** Kein oder ungültiger Token.  
+**Fehler (401):** Kein oder ungültiger Token.
 **Fehler (403):** Benutzer hat nicht die Rolle `provider`.
 
 ---
@@ -140,7 +140,7 @@ curl http://YOUR_HOST/api/provider/scooters \
 Ausleihen des angemeldeten Nutzers abrufen.
 
 - Fahrgäste erhalten ihre eigenen Fahrten.
-- Anbieter erhalten alle Fahrten auf ihren Rollern.
+- Anbieter erhalten alle Fahrten auf ihren Fahrzeugen.
 
 **Request:**
 ```bash
@@ -153,7 +153,7 @@ curl http://YOUR_HOST/api/rentals \
 [
   {
     "id": 3,
-    "scooter_id": 1,
+    "vehicle_id": 1,
     "rider": "rider1",
     "start_time": "2025-06-01T09:00:00",
     "end_time": "2025-06-01T09:22:00",
@@ -168,9 +168,9 @@ curl http://YOUR_HOST/api/rentals \
 
 ---
 
-### POST /api/rentals/start/\<scooter\_id\> 🔒
+### POST /api/rentals/start/\<vehicle\_id\> 🔒
 
-Ausleihe eines Scooters starten. Nur für Fahrgäste (`rider`). Der korrekte Entriegelungscode muss im Request-Body mitgegeben werden.
+Ausleihe eines Fahrzeugs starten. Nur für Fahrgäste (`rider`). Der korrekte Entriegelungscode muss im Request-Body mitgegeben werden.
 
 **Request:**
 ```bash
@@ -186,7 +186,7 @@ curl -X POST http://YOUR_HOST/api/rentals/start/1 \
   "message": "rental_started",
   "rental": {
     "id": 5,
-    "scooter_id": 1,
+    "vehicle_id": 1,
     "rider": "rider1",
     "start_time": "2025-06-01T10:00:00",
     "end_time": null,
@@ -234,7 +234,7 @@ curl -X POST http://YOUR_HOST/api/rentals/end/5 \
   "message": "rental_completed",
   "rental": {
     "id": 5,
-    "scooter_id": 1,
+    "vehicle_id": 1,
     "rider": "rider1",
     "start_time": "2025-06-01T10:00:00",
     "end_time": "2025-06-01T10:22:00",
@@ -252,7 +252,7 @@ curl -X POST http://YOUR_HOST/api/rentals/end/5 \
 { "error": "Ungültiger Breitengrad." }
 ```
 
-**Fehler (401):** Kein oder ungültiger Token.  
+**Fehler (401):** Kein oder ungültiger Token.
 **Fehler (403):** Ausleihe gehört einem anderen Fahrgast.
 
 ---
@@ -262,9 +262,9 @@ curl -X POST http://YOUR_HOST/api/rentals/end/5 \
 | Methode | Endpunkt | Auth | Beschreibung |
 |---|---|---|---|
 | POST | `/api/token` | – | Token beziehen |
-| GET | `/api/scooters` | – | Alle Scooter |
-| GET | `/api/scooters/<id>` | – | Scooter-Details |
-| GET | `/api/provider/scooters` | 🔒 Provider | Eigene Flotte |
+| GET | `/api/vehicles` | – | Alle Fahrzeuge |
+| GET | `/api/vehicles/<id>` | – | Fahrzeug-Details |
+| GET | `/api/provider/vehicles` | 🔒 Provider | Eigene Flotte |
 | GET | `/api/rentals` | 🔒 | Eigene Ausleihen |
 | POST | `/api/rentals/start/<id>` | 🔒 Rider | Ausleihe starten |
 | POST | `/api/rentals/end/<id>` | 🔒 Rider | Ausleihe beenden |

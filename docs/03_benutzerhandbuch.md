@@ -96,7 +96,7 @@ Beispiel: 20 Minuten → CHF 1.50 + CHF 7.00 = **CHF 8.50**
 
 ## 6. Flotte verwalten (Anbieter)
 
-Die Flottenverwaltung ist unter `http://YOUR_HOST/providers/scooters` erreichbar (Direktlink im Navigationsmenü).
+Die Flottenverwaltung ist unter `http://YOUR_HOST/providers/vehicles` erreichbar (Direktlink im Navigationsmenü).
 
 ### Neues Fahrzeug anlegen
 

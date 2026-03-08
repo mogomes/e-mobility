@@ -16,14 +16,15 @@ Speichert alle Benutzerkonten der Anwendung.
 | `api_token` | Varchar(64) | Eindeutiger API-Token |
 | `created_at` | Timestamp with time zone | Erstellungszeitpunkt |
 
-### `scooters`
-Speichert die von Providern angebotenen E-Scooter.
+### `vehicles`
+Speichert die von Providern angebotenen Fahrzeuge.
 
 | Spalte | Typ | Beschreibung |
 |---|---|---|
 | `id` | Integer | Primärschlüssel |
-| `public_id` | Varchar(32) | Öffentliche Rollernummer |
-| `name` | Varchar(120) | Rollerbezeichnung |
+| `public_id` | Varchar(32) | Öffentliche Fahrzeugnummer |
+| `name` | Varchar(120) | Fahrzeugbezeichnung |
+| `vehicle_type` | Varchar(20) | `e_scooter`, `e_bike`, `e_cargo` |
 | `battery_level` | Integer | Akkustand 0 bis 100 |
 | `latitude` | Numeric(9,6) | Breitengrad |
 | `longitude` | Numeric(9,6) | Längengrad |
@@ -38,7 +39,7 @@ Speichert Ausleihen und Rückgaben.
 | Spalte | Typ | Beschreibung |
 |---|---|---|
 | `id` | Integer | Primärschlüssel |
-| `scooter_id` | Integer | Fremdschlüssel auf `scooters.id` |
+| `vehicle_id` | Integer | Fremdschlüssel auf `vehicles.id` |
 | `rider_id` | Integer | Fremdschlüssel auf `users.id` |
 | `start_time` | Timestamp with time zone | Startzeit |
 | `end_time` | Timestamp with time zone | Endzeit |
@@ -56,20 +57,20 @@ Speichert Ausleihen und Rückgaben.
 
 ## Schlüsselbeziehungen
 
-- `scooters.provider_id` → `users.id`
-- `rentals.scooter_id` → `scooters.id`
+- `vehicles.provider_id` → `users.id`
+- `rentals.vehicle_id` → `vehicles.id`
 - `rentals.rider_id` → `users.id`
 
 ## Kardinalitäten
 
-- Ein **Provider** kann **mehrere Scooter** besitzen.
-- Ein **Scooter** kann **mehrere Ausleihen** haben.
+- Ein **Provider** kann **mehrere Fahrzeuge** besitzen.
+- Ein **Fahrzeug** kann **mehrere Ausleihen** haben.
 - Ein **Rider** kann **mehrere Ausleihen** haben.
 
 ## Vereinfachtes ER-Modell
 
 ```text
-users (1) ----- (n) scooters
+users (1) ----- (n) vehicles
 users (1) ----- (n) rentals
-scooters (1) -- (n) rentals
+vehicles (1) -- (n) rentals
 ```

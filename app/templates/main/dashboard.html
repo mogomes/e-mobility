@@ -53,7 +53,7 @@
       </div>
       {% endif %}
       {% if current_user.role == 'rider' and scooter.status == 'available' %}
-      <form method="post" action="{{ url_for('rentals.start', scooter_id=scooter.id) }}" style="margin-top:.75rem">
+      <form method="post" action="{{ url_for('rentals.start', vehicle_id=scooter.id) }}" style="margin-top:.75rem">
         <label>QR-Code / Entriegelungscode
           <input type="text" name="unlock_code" placeholder="z. B. QR-3001" required autocomplete="off">
         </label>
@@ -81,7 +81,7 @@
       <div class="card-top">
         <span class="status-badge {{ rental.status }}">{{ status_label(rental.status) }}</span>
       </div>
-      <h3>{{ rental.scooter.name }}</h3>
+      <h3>{{ rental.vehicle.name }}</h3>
       <p><strong>Ausleihe Nr.:</strong> {{ rental.id }}</p>
       <p><strong>Beginn:</strong> {{ rental.start_time.strftime('%d.%m.%Y %H:%M') if rental.start_time else '—' }}</p>
       <p><strong>Ende:</strong> {{ rental.end_time.strftime('%d.%m.%Y %H:%M') if rental.end_time else '—' }}</p>
@@ -92,10 +92,10 @@
           <input type="number" step="0.01" name="end_km" value="{{ rental.start_km }}" required>
         </label>
         <label>Breitengrad
-          <input type="number" step="0.000001" name="latitude" value="{{ rental.scooter.latitude }}" required>
+          <input type="number" step="0.000001" name="latitude" value="{{ rental.vehicle.latitude }}" required>
         </label>
         <label>Längengrad
-          <input type="number" step="0.000001" name="longitude" value="{{ rental.scooter.longitude }}" required>
+          <input type="number" step="0.000001" name="longitude" value="{{ rental.vehicle.longitude }}" required>
         </label>
         <button type="submit">Ausleihe beenden</button>
       </form>

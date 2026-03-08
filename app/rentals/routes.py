@@ -2,17 +2,17 @@ from flask import Blueprint, flash, redirect, request, url_for
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..models import Rental, Scooter
+from ..models import Rental, Vehicle
 from ..services import end_rental, start_rental
 
 
 rentals_bp = Blueprint('rentals', __name__)
 
 
-@rentals_bp.route('/start/<int:scooter_id>', methods=['POST'])
+@rentals_bp.route('/start/<int:vehicle_id>', methods=['POST'])
 @login_required
-def start(scooter_id):
-    scooter = db.get_or_404(Scooter, scooter_id)
+def start(vehicle_id):
+    scooter = db.get_or_404(Vehicle, vehicle_id)
     unlock_code = request.form.get('unlock_code', '').strip()
     try:
         start_rental(current_user, scooter, unlock_code=unlock_code)

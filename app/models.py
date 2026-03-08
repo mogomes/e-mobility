@@ -34,7 +34,7 @@ class VehicleType(str, Enum):
     E_CARGO = 'e_cargo'
 
 
-class ScooterStatus(str, Enum):
+class VehicleStatus(str, Enum):
     AVAILABLE = 'available'
     RENTED = 'rented'
     MAINTENANCE = 'maintenance'
@@ -57,7 +57,7 @@ class User(UserMixin, db.Model):
     api_token = db.Column(db.String(64), unique=True, nullable=False, default=lambda: secrets.token_hex(24))
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow, nullable=False)
 
-    provider_scooters = db.relationship('Scooter', back_populates='provider', lazy=True)
+    provider_vehicles = db.relationship('Vehicle', back_populates='provider', lazy=True)
     rentals = db.relationship('Rental', back_populates='rider', lazy=True)
 
     def set_password(self, password: str) -> None:
@@ -71,8 +71,8 @@ class User(UserMixin, db.Model):
         return self.api_token
 
 
-class Scooter(db.Model):
-    __tablename__ = 'scooters'
+class Vehicle(db.Model):
+    __tablename__ = 'vehicles'
 
     id = db.Column(db.Integer, primary_key=True)
     public_id = db.Column(db.String(32), unique=True, nullable=False)
@@ -81,20 +81,20 @@ class Scooter(db.Model):
     latitude = db.Column(db.Numeric(9, 6), nullable=False)
     longitude = db.Column(db.Numeric(9, 6), nullable=False)
     vehicle_type = db.Column(db.String(20), nullable=False, default=VehicleType.E_SCOOTER.value)
-    status = db.Column(db.String(20), nullable=False, default=ScooterStatus.AVAILABLE.value)
+    status = db.Column(db.String(20), nullable=False, default=VehicleStatus.AVAILABLE.value)
     unlock_code = db.Column(db.String(32), nullable=False)
     provider_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), default=utcnow, nullable=False)
 
-    provider = db.relationship('User', back_populates='provider_scooters')
-    rentals = db.relationship('Rental', back_populates='scooter', lazy=True)
+    provider = db.relationship('User', back_populates='provider_vehicles')
+    rentals = db.relationship('Rental', back_populates='vehicle', lazy=True)
 
 
 class Rental(db.Model):
     __tablename__ = 'rentals'
 
     id = db.Column(db.Integer, primary_key=True)
-    scooter_id = db.Column(db.Integer, db.ForeignKey('scooters.id'), nullable=False)
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'), nullable=False)
     rider_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     start_time = db.Column(db.DateTime(timezone=True), default=utcnow, nullable=False)
     end_time = db.Column(db.DateTime(timezone=True), nullable=True)
@@ -110,7 +110,7 @@ class Rental(db.Model):
     distance_km = db.Column(db.Numeric(10, 2), nullable=True)
     status = db.Column(db.String(20), nullable=False, default=RentalStatus.ACTIVE.value)
 
-    scooter = db.relationship('Scooter', back_populates='rentals')
+    vehicle = db.relationship('Vehicle', back_populates='rentals')
     rider = db.relationship('User', back_populates='rentals')
 
     def duration_minutes(self) -> int:

@@ -47,11 +47,11 @@
 | ID | Beschreibung | Status |
 |---|---|---|
 | FA-05.1 | Token-basierte Authentifizierung via `POST /api/token` (Bearer-Token) | ✅ umgesetzt |
-| FA-05.2 | Öffentliche Fahrzeugliste ohne Authentifizierung (`GET /api/scooters`) | ✅ umgesetzt |
-| FA-05.3 | Detail-Abfrage einzelner Fahrzeuge (`GET /api/scooters/<id>`) — Feld `vehicle_type` enthalten | ✅ umgesetzt |
+| FA-05.2 | Öffentliche Fahrzeugliste ohne Authentifizierung (`GET /api/vehicles`) | ✅ umgesetzt |
+| FA-05.3 | Detail-Abfrage einzelner Fahrzeuge (`GET /api/vehicles/<id>`) — Feld `vehicle_type` enthalten | ✅ umgesetzt |
 | FA-05.4 | Ausleihe starten und beenden per API (`POST /api/rentals/start/<id>`, `POST /api/rentals/end/<id>`) | ✅ umgesetzt |
 | FA-05.5 | Ausleihen des angemeldeten Nutzers abrufen (`GET /api/rentals`) | ✅ umgesetzt |
-| FA-05.6 | Anbieter-spezifische Fahrzeugliste (`GET /api/provider/scooters`) | ✅ umgesetzt |
+| FA-05.6 | Anbieter-spezifische Fahrzeugliste (`GET /api/provider/vehicles`) | ✅ umgesetzt |
 
 ### FA-06 – Benutzeroberfläche
 
@@ -68,7 +68,7 @@
 | ID | Anforderung | Umsetzung |
 |---|---|---|
 | NFA-01 | Erweiterbarkeit auf weitere Fahrzeugtypen (E-Bikes, E-Cargo) | Umgesetzt: `VehicleType`-Enum (`e_scooter`, `e_bike`, `e_cargo`), Spalte `vehicle_type` im Modell, Anzeige in UI und API | ✅ umgesetzt |
-| NFA-02 | Performance: bis zu 500 gleichzeitige Ausleihen | Gunicorn mit mehreren Workern; PostgreSQL-Indizes auf `status`, `rider_id`, `scooter_id` |
+| NFA-02 | Performance: bis zu 500 gleichzeitige Ausleihen | Gunicorn mit mehreren Workern; PostgreSQL-Indizes auf `status`, `rider_id`, `vehicle_id` |
 | NFA-03 | Sicherheit: Passwörter gehasht, Tokens einmalig, Secrets via Umgebungsvariablen | Werkzeug PBKDF2, `secrets.token_hex(24)` für API-Token |
 | NFA-04 | Wartbarkeit: modulare Struktur | Flask-Blueprints, separater Service-Layer |
 | NFA-05 | Verfügbarkeit: automatischer Neustart | systemd `Restart=always` / Docker `restart: unless-stopped` |

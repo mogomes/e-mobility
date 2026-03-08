@@ -28,9 +28,9 @@ Die Geschäftslogik (Ausleihe starten/beenden, Preisberechnung, Validierungen) i
 
 ```mermaid
 erDiagram
-    USER ||--o{ SCOOTER : "stellt bereit"
+    USER ||--o{ VEHICLE : "stellt bereit"
     USER ||--o{ RENTAL  : "bucht"
-    SCOOTER ||--o{ RENTAL : "wird genutzt in"
+    VEHICLE ||--o{ RENTAL : "wird genutzt in"
 
     USER {
         int     id           PK
@@ -43,7 +43,7 @@ erDiagram
         datetime created_at
     }
 
-    SCOOTER {
+    VEHICLE {
         int     id           PK
         string  public_id    UK
         string  name
@@ -59,7 +59,7 @@ erDiagram
 
     RENTAL {
         int     id            PK
-        int     scooter_id    FK
+        int     vehicle_id    FK
         int     rider_id      FK
         datetime start_time
         datetime end_time
@@ -79,17 +79,17 @@ erDiagram
 
 **Datenbank-Constraints (PostgreSQL):**
 - `users.role` ∈ `{rider, provider}`
-- `scooters.vehicle_type` ∈ `{e_scooter, e_bike, e_cargo}`
-- `scooters.status` ∈ `{available, rented, maintenance}`
-- `scooters.battery_level` ∈ 0–100
+- `vehicles.vehicle_type` ∈ `{e_scooter, e_bike, e_cargo}`
+- `vehicles.status` ∈ `{available, rented, maintenance}`
+- `vehicles.battery_level` ∈ 0–100
 - `rentals.status` ∈ `{active, completed}`
 - `rentals.end_km >= rentals.start_km` (wenn gesetzt)
-- Fremdschlüssel mit `ON DELETE RESTRICT` (kein Löschen von Usern/Scootern bei offenen Ausleihen)
+- Fremdschlüssel mit `ON DELETE RESTRICT` (kein Löschen von Usern/Fahrzeugen bei offenen Ausleihen)
 
 **Indizes für Performance:**
 ```sql
-idx_scooters_provider_id, idx_scooters_status
-idx_rentals_scooter_id, idx_rentals_rider_id, idx_rentals_status
+idx_vehicles_provider_id, idx_vehicles_status
+idx_rentals_vehicle_id, idx_rentals_rider_id, idx_rentals_status
 ```
 
 ---
@@ -118,7 +118,7 @@ sequenceDiagram
     end
 ```
 
-### Scooter ausleihen
+### Fahrzeug ausleihen
 
 ```mermaid
 sequenceDiagram
@@ -129,12 +129,12 @@ sequenceDiagram
 
     Fahrgast->>Client: QR-Code eingeben und Ausleihe starten
     Client->>Flask: POST /rentals/start/<id>  {unlock_code}
-    Flask->>DB: Scooter laden
+    Flask->>DB: Fahrzeug laden
     Flask->>Flask: unlock_code validieren
     Flask->>DB: Aktive Ausleihe des Fahrgasts prüfen
     Flask->>DB: Zahlungsmittel prüfen
     Flask->>DB: Rental anlegen
-    Flask->>DB: Scooter.status = rented
+    Flask->>DB: Vehicle.status = rented
     DB-->>Flask: OK
     Flask-->>Client: 201 Created / Flash-Erfolgsmeldung
 ```
@@ -150,7 +150,7 @@ flowchart TD
     E --> F[Fahrtdauer berechnen]
     F --> G["Preis: 1.50 + 0.35 x Minuten"]
     G --> H["Distanz: end_km - start_km"]
-    H --> I[Scooter-Standort aktualisieren]
+    H --> I[Fahrzeug-Standort aktualisieren]
     I --> J[Rental.status = completed]
     J --> K[Antwort an Client]
 ```

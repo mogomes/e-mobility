@@ -1,5 +1,5 @@
 [Unit]
-Description=Gunicorn for DBWE E-Scooter Platform
+Description=Gunicorn for DBWE E-Fahrzeuge Platform
 After=network.target
 
 [Service]

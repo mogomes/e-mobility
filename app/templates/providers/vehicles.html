@@ -80,7 +80,7 @@
       </div>
       <div class="scooter-visual">{{ vehicle_type_emoji(scooter.vehicle_type) }}</div>
       <p class="vehicle-type-label">{{ vehicle_type_label(scooter.vehicle_type) }}</p>
-      <form method="post" action="{{ url_for('providers.update_scooter', scooter_id=scooter.id) }}">
+      <form method="post" action="{{ url_for('providers.update_vehicle', vehicle_id=scooter.id) }}">
         <label>Bezeichnung
           <input type="text" name="name" value="{{ scooter.name }}" required>
         </label>
@@ -109,7 +109,7 @@
         </label>
         <button type="submit">Änderungen speichern</button>
       </form>
-      <form method="post" action="{{ url_for('providers.delete_scooter', scooter_id=scooter.id) }}" style="margin-top:.5rem">
+      <form method="post" action="{{ url_for('providers.delete_vehicle', vehicle_id=scooter.id) }}" style="margin-top:.5rem">
         <button type="submit" class="danger">Fahrzeug löschen</button>
       </form>
     </article>

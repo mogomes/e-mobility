@@ -1,11 +1,11 @@
-from .models import RentalStatus, ScooterStatus, UserRole, VehicleType
+from .models import RentalStatus, VehicleStatus, UserRole, VehicleType
 
 
 def status_label(value: str) -> str:
     mapping = {
-        ScooterStatus.AVAILABLE.value: 'Verfügbar',
-        ScooterStatus.RENTED.value: 'Ausgeliehen',
-        ScooterStatus.MAINTENANCE.value: 'Wartung',
+        VehicleStatus.AVAILABLE.value: 'Verfügbar',
+        VehicleStatus.RENTED.value: 'Ausgeliehen',
+        VehicleStatus.MAINTENANCE.value: 'Wartung',
         RentalStatus.ACTIVE.value: 'Laufend',
         RentalStatus.COMPLETED.value: 'Beendet',
     }

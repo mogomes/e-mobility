@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models import Rental, Scooter, User
+from app.models import Rental, Vehicle, User
 
 
 def login(client, username, password):
@@ -48,10 +48,10 @@ def test_login_fails_with_wrong_password(client):
 def test_provider_can_create_scooter(client, provider_credentials, app):
     login(client, provider_credentials['username'], provider_credentials['password'])
     response = client.post(
-        '/providers/scooters',
+        '/providers/vehicles',
         data={
             'public_id': 'SC-9999',
-            'name': 'Test Scooter',
+            'name': 'Test Vehicle',
             'vehicle_type': 'e_scooter',
             'battery_level': 88,
             'latitude': 46.948799,
@@ -63,17 +63,17 @@ def test_provider_can_create_scooter(client, provider_credentials, app):
     )
     assert response.status_code == 200
     with app.app_context():
-        assert Scooter.query.filter_by(public_id='SC-9999').first() is not None
+        assert Vehicle.query.filter_by(public_id='SC-9999').first() is not None
 
 
 def test_rider_can_start_and_end_rental(client, rider_credentials, app):
     login(client, rider_credentials['username'], rider_credentials['password'])
     with app.app_context():
-        scooter = Scooter.query.filter_by(status='available').first()
-        scooter_id = scooter.id
+        scooter = Vehicle.query.filter_by(status='available').first()
+        vehicle_id = scooter.id
         unlock_code = scooter.unlock_code
     start_response = client.post(
-        f'/rentals/start/{scooter_id}',
+        f'/rentals/start/{vehicle_id}',
         data={'unlock_code': unlock_code},
         follow_redirects=True,
     )
@@ -97,10 +97,10 @@ def test_rental_rejected_with_wrong_unlock_code(client, rider_credentials, app):
     """Ausleihe schlägt fehl wenn der Entriegelungscode falsch ist."""
     login(client, rider_credentials['username'], rider_credentials['password'])
     with app.app_context():
-        scooter = Scooter.query.filter_by(status='available').first()
-        scooter_id = scooter.id
+        scooter = Vehicle.query.filter_by(status='available').first()
+        vehicle_id = scooter.id
     response = client.post(
-        f'/rentals/start/{scooter_id}',
+        f'/rentals/start/{vehicle_id}',
         data={'unlock_code': 'FALSCHER-CODE'},
         follow_redirects=True,
     )
@@ -109,26 +109,26 @@ def test_rental_rejected_with_wrong_unlock_code(client, rider_credentials, app):
         assert Rental.query.filter_by(status='active').count() == 0
 
 
-def test_api_token_and_scooter_list(client, rider_credentials):
+def test_api_token_and_vehicle_list(client, rider_credentials):
     token_response = client.post('/api/token', json=rider_credentials)
     assert token_response.status_code == 200
     token = token_response.get_json()['token']
 
-    scooters_response = client.get('/api/scooters')
-    assert scooters_response.status_code == 200
-    assert isinstance(scooters_response.get_json(), list)
+    vehicles_response = client.get('/api/vehicles')
+    assert vehicles_response.status_code == 200
+    assert isinstance(vehicles_response.get_json(), list)
 
     rentals_response = client.get('/api/rentals', headers={'Authorization': f'Bearer {token}'})
     assert rentals_response.status_code == 200
     assert isinstance(rentals_response.get_json(), list)
 
 
-def test_api_scooter_detail(client, app):
-    """GET /api/scooters/<id> liefert Detaildaten eines einzelnen Scooters."""
+def test_api_vehicle_detail(client, app):
+    """GET /api/vehicles/<id> liefert Detaildaten eines einzelnen Fahrzeugs."""
     with app.app_context():
-        scooter = Scooter.query.first()
-        scooter_id = scooter.id
-    response = client.get(f'/api/scooters/{scooter_id}')
+        vehicle = Vehicle.query.first()
+        vehicle_id = vehicle.id
+    response = client.get(f'/api/vehicles/{vehicle_id}')
     assert response.status_code == 200
     data = response.get_json()
     assert 'public_id' in data

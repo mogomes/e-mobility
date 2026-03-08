@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from .extensions import db
-from .models import Rental, RentalStatus, Scooter, ScooterStatus, User, UserRole, VehicleType, utcnow
+from .models import Rental, RentalStatus, Vehicle, VehicleStatus, User, UserRole, VehicleType, utcnow
 
 BERN_SCOOTERS = [
     {
@@ -10,7 +10,7 @@ BERN_SCOOTERS = [
         'battery_level': 94,
         'latitude': 46.948799,
         'longitude': 7.439136,
-        'status': ScooterStatus.AVAILABLE.value,
+        'status': VehicleStatus.AVAILABLE.value,
         'unlock_code': 'QR-3001',
         'vehicle_type': VehicleType.E_SCOOTER.value,
     },
@@ -20,7 +20,7 @@ BERN_SCOOTERS = [
         'battery_level': 88,
         'latitude': 46.947974,
         'longitude': 7.443131,
-        'status': ScooterStatus.AVAILABLE.value,
+        'status': VehicleStatus.AVAILABLE.value,
         'unlock_code': 'QR-3002',
         'vehicle_type': VehicleType.E_SCOOTER.value,
     },
@@ -30,7 +30,7 @@ BERN_SCOOTERS = [
         'battery_level': 81,
         'latitude': 46.948271,
         'longitude': 7.447599,
-        'status': ScooterStatus.AVAILABLE.value,
+        'status': VehicleStatus.AVAILABLE.value,
         'unlock_code': 'QR-3003',
         'vehicle_type': VehicleType.E_BIKE.value,
     },
@@ -40,7 +40,7 @@ BERN_SCOOTERS = [
         'battery_level': 76,
         'latitude': 46.947357,
         'longitude': 7.458099,
-        'status': ScooterStatus.AVAILABLE.value,
+        'status': VehicleStatus.AVAILABLE.value,
         'unlock_code': 'QR-3004',
         'vehicle_type': VehicleType.E_BIKE.value,
     },
@@ -50,7 +50,7 @@ BERN_SCOOTERS = [
         'battery_level': 69,
         'latitude': 46.955118,
         'longitude': 7.460742,
-        'status': ScooterStatus.AVAILABLE.value,
+        'status': VehicleStatus.AVAILABLE.value,
         'unlock_code': 'QR-3005',
         'vehicle_type': VehicleType.E_CARGO.value,
     },
@@ -60,7 +60,7 @@ BERN_SCOOTERS = [
         'battery_level': 91,
         'latitude': 46.944328,
         'longitude': 7.442301,
-        'status': ScooterStatus.AVAILABLE.value,
+        'status': VehicleStatus.AVAILABLE.value,
         'unlock_code': 'QR-3006',
         'vehicle_type': VehicleType.E_SCOOTER.value,
     },
@@ -104,10 +104,10 @@ def seed_demo_data() -> None:
     db.session.flush()
 
     if Rental.query.count() == 0:
-        first_scooter = Scooter.query.filter_by(public_id='SC-3001').first() or Scooter.query.order_by(Scooter.id.asc()).first()
-        if first_scooter is not None:
+        first_vehicle = Vehicle.query.filter_by(public_id='SC-3001').first() or Vehicle.query.order_by(Vehicle.id.asc()).first()
+        if first_vehicle is not None:
             historic_rental = Rental(
-                scooter_id=first_scooter.id,
+                vehicle_id=first_vehicle.id,
                 rider_id=rider.id,
                 start_time=utcnow() - timedelta(minutes=24),
                 end_time=utcnow() - timedelta(minutes=8),
@@ -129,11 +129,11 @@ def seed_demo_data() -> None:
 def _ensure_bern_scooters(provider_id: int) -> None:
     # Alle bestehenden Ausleihen und Roller löschen und neu anlegen
     Rental.query.delete()
-    Scooter.query.delete()
+    Vehicle.query.delete()
     db.session.flush()
 
     for scooter_data in BERN_SCOOTERS:
-        scooter = Scooter(provider_id=provider_id, **scooter_data)
+        scooter = Vehicle(provider_id=provider_id, **scooter_data)
         db.session.add(scooter)
 
 
@@ -141,22 +141,22 @@ def _ensure_bern_scooters(provider_id: int) -> None:
 
 def _relocate_legacy_scooters_to_bern(provider_id: int) -> None:
     bern_positions = [(item['latitude'], item['longitude']) for item in BERN_SCOOTERS]
-    legacy_scooters = Scooter.query.filter(~Scooter.public_id.in_([item['public_id'] for item in BERN_SCOOTERS])).order_by(Scooter.id.asc()).all()
+    legacy_scooters = Vehicle.query.filter(~Vehicle.public_id.in_([item['public_id'] for item in BERN_SCOOTERS])).order_by(Vehicle.id.asc()).all()
     for index, scooter in enumerate(legacy_scooters):
         latitude, longitude = bern_positions[index % len(bern_positions)]
         # Frühere Standarddaten aus Zürich konsequent auf Bern umstellen.
         scooter.latitude = latitude
         scooter.longitude = longitude
         scooter.provider_id = provider_id
-        if scooter.status != ScooterStatus.RENTED.value:
-            scooter.status = ScooterStatus.AVAILABLE.value
+        if scooter.status != VehicleStatus.RENTED.value:
+            scooter.status = VehicleStatus.AVAILABLE.value
 
-def start_rental(user: User, scooter: Scooter, unlock_code: str | None = None) -> Rental:
+def start_rental(user: User, scooter: Vehicle, unlock_code: str | None = None) -> Rental:
     if user.role != UserRole.RIDER.value:
         raise ValueError('Nur Fahrgäste dürfen Fahrzeuge ausleihen.')
     if not user.payment_method:
         raise ValueError('Bitte zuerst ein Zahlungsmittel hinterlegen.')
-    if scooter.status != ScooterStatus.AVAILABLE.value:
+    if scooter.status != VehicleStatus.AVAILABLE.value:
         raise ValueError('Fahrzeug ist derzeit nicht verfügbar.')
     if unlock_code is None or unlock_code.strip() != scooter.unlock_code:
         raise ValueError('Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Fahrzeug scannen.')
@@ -165,13 +165,13 @@ def start_rental(user: User, scooter: Scooter, unlock_code: str | None = None) -
         raise ValueError('Es existiert bereits eine aktive Ausleihe.')
 
     rental = Rental(
-        scooter_id=scooter.id,
+        vehicle_id=scooter.id,
         rider_id=user.id,
         start_km=0,
         start_latitude=scooter.latitude,
         start_longitude=scooter.longitude,
     )
-    scooter.status = ScooterStatus.RENTED.value
+    scooter.status = VehicleStatus.RENTED.value
     db.session.add(rental)
     db.session.commit()
     return rental
@@ -196,9 +196,9 @@ def end_rental(rental: Rental, end_km: float, latitude: float, longitude: float)
     rental.total_price = rental.calculate_total_price()
     rental.distance_km = rental.calculate_distance()
 
-    rental.scooter.latitude = latitude
-    rental.scooter.longitude = longitude
-    rental.scooter.status = ScooterStatus.AVAILABLE.value
+    rental.vehicle.latitude = latitude
+    rental.vehicle.longitude = longitude
+    rental.vehicle.status = VehicleStatus.AVAILABLE.value
 
     db.session.commit()
     return rental

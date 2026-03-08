@@ -4,12 +4,12 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..models import Scooter, ScooterStatus, UserRole, VehicleType
+from ..models import Vehicle, VehicleStatus, UserRole, VehicleType
 
 
 providers_bp = Blueprint('providers', __name__)
 
-def serialize_scooter_map(scooter: Scooter) -> dict:
+def serialize_vehicle_map(scooter: Vehicle) -> dict:
     return {
         'id': scooter.id,
         'name': scooter.name,
@@ -27,54 +27,54 @@ def ensure_provider():
         abort(403)
 
 
-@providers_bp.route('/scooters', methods=['GET', 'POST'])
+@providers_bp.route('/vehicles', methods=['GET', 'POST'])
 @login_required
-def scooters():
+def vehicles():
     ensure_provider()
 
     if request.method == 'POST':
-        scooter = Scooter(
+        vehicle = Vehicle(
             public_id=request.form.get('public_id', '').strip() or f'BE-{secrets.randbelow(9999):04d}',
             name=request.form.get('name', '').strip(),
             battery_level=int(request.form.get('battery_level', 100)),
             latitude=float(request.form.get('latitude', 46.94809)),
             longitude=float(request.form.get('longitude', 7.44744)),
             vehicle_type=request.form.get('vehicle_type', VehicleType.E_SCOOTER.value),
-            status=request.form.get('status', ScooterStatus.AVAILABLE.value),
+            status=request.form.get('status', VehicleStatus.AVAILABLE.value),
             unlock_code=request.form.get('unlock_code', '').strip() or secrets.token_hex(4).upper(),
             provider_id=current_user.id,
         )
-        db.session.add(scooter)
+        db.session.add(vehicle)
         db.session.commit()
         flash('Fahrzeug wurde erstellt.', 'success')
-        return redirect(url_for('providers.scooters'))
+        return redirect(url_for('providers.vehicles'))
 
-    scooters = Scooter.query.filter_by(provider_id=current_user.id).order_by(Scooter.id.desc()).all()
-    return render_template('providers/scooters.html', scooters=scooters, scooter_status=ScooterStatus, vehicle_type=VehicleType, map_scooters=[serialize_scooter_map(s) for s in scooters])
+    vehicles = Vehicle.query.filter_by(provider_id=current_user.id).order_by(Vehicle.id.desc()).all()
+    return render_template('providers/vehicles.html', scooters=vehicles, scooter_status=VehicleStatus, vehicle_type=VehicleType, map_scooters=[serialize_vehicle_map(v) for v in vehicles])
 
 
-@providers_bp.route('/scooters/<int:scooter_id>/update', methods=['POST'])
+@providers_bp.route('/vehicles/<int:vehicle_id>/update', methods=['POST'])
 @login_required
-def update_scooter(scooter_id):
+def update_vehicle(vehicle_id):
     ensure_provider()
-    scooter = Scooter.query.filter_by(id=scooter_id, provider_id=current_user.id).first_or_404()
-    scooter.name = request.form.get('name', scooter.name).strip()
-    scooter.battery_level = int(request.form.get('battery_level', scooter.battery_level))
-    scooter.latitude = float(request.form.get('latitude', scooter.latitude))
-    scooter.longitude = float(request.form.get('longitude', scooter.longitude))
-    scooter.vehicle_type = request.form.get('vehicle_type', scooter.vehicle_type)
-    scooter.status = request.form.get('status', scooter.status)
+    vehicle = Vehicle.query.filter_by(id=vehicle_id, provider_id=current_user.id).first_or_404()
+    vehicle.name = request.form.get('name', vehicle.name).strip()
+    vehicle.battery_level = int(request.form.get('battery_level', vehicle.battery_level))
+    vehicle.latitude = float(request.form.get('latitude', vehicle.latitude))
+    vehicle.longitude = float(request.form.get('longitude', vehicle.longitude))
+    vehicle.vehicle_type = request.form.get('vehicle_type', vehicle.vehicle_type)
+    vehicle.status = request.form.get('status', vehicle.status)
     db.session.commit()
     flash('Fahrzeug wurde aktualisiert.', 'success')
-    return redirect(url_for('providers.scooters'))
+    return redirect(url_for('providers.vehicles'))
 
 
-@providers_bp.route('/scooters/<int:scooter_id>/delete', methods=['POST'])
+@providers_bp.route('/vehicles/<int:vehicle_id>/delete', methods=['POST'])
 @login_required
-def delete_scooter(scooter_id):
+def delete_vehicle(vehicle_id):
     ensure_provider()
-    scooter = Scooter.query.filter_by(id=scooter_id, provider_id=current_user.id).first_or_404()
-    db.session.delete(scooter)
+    vehicle = Vehicle.query.filter_by(id=vehicle_id, provider_id=current_user.id).first_or_404()
+    db.session.delete(vehicle)
     db.session.commit()
     flash('Fahrzeug wurde gelöscht.', 'info')
-    return redirect(url_for('providers.scooters'))
+    return redirect(url_for('providers.vehicles'))

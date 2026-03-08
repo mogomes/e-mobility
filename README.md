@@ -1,11 +1,11 @@
 # e-mobility Bern
 
-Webplattform für den Verleih von E-Scootern in Bern. Entwickelt als Lernprojekt im Rahmen des Moduls DBWE.
+Webplattform für den Verleih von E-Fahrzeugen in Bern. Entwickelt als Lernprojekt im Rahmen des Moduls DBWE.
 
 ## Funktionen
 
 - Benutzerkonten mit den Rollen **Anbieter** (Provider) und **Fahrgast** (Rider)
-- E-Scooter-Verwaltung: Standort, Akkustand, Status
+- E-Fahrzeuge-Verwaltung: Standort, Akkustand, Status
 - Ausleihe und Rückgabe mit automatischer Preisberechnung
 - Interaktive Kartenansicht (Leaflet.js) mit allen verfügbaren Rollern in Bern
 - RESTful API mit Token-Authentifizierung
@@ -28,14 +28,14 @@ Webplattform für den Verleih von E-Scootern in Bern. Entwickelt als Lernprojekt
 ```text
 app/
   __init__.py          # App-Factory (create_app)
-  models.py            # User, Scooter, Rental + Enums
+  models.py            # User, Vehicle, Rental + Enums
   services.py          # Geschäftslogik: start_rental, end_rental, seed_demo_data
   extensions.py        # db, migrate, login_manager
   presentation.py      # Jinja-Helpers: status_label, role_label
   api/                 # Blueprint: REST-Endpunkte, Token-Auth
   auth/                # Blueprint: Registrierung, Login, Logout
   main/                # Blueprint: Startseite, Dashboard
-  providers/           # Blueprint: Scooter-Flottenverwaltung
+  providers/           # Blueprint: Fahrzeug-Flottenverwaltung
   rentals/             # Blueprint: Ausleihe und Rückgabe
   static/              # CSS, JS, SVG-Assets
   templates/           # Jinja2-Templates
@@ -53,9 +53,9 @@ tests/
 
 ```mermaid
 erDiagram
-    USER ||--o{ SCOOTER : provides
+    USER ||--o{ VEHICLE : provides
     USER ||--o{ RENTAL : books
-    SCOOTER ||--o{ RENTAL : used_in
+    VEHICLE ||--o{ RENTAL : used_in
 
     USER {
         int id PK
@@ -67,10 +67,11 @@ erDiagram
         string api_token UK
     }
 
-    SCOOTER {
+    VEHICLE {
         int id PK
         string public_id UK
         string name
+        string vehicle_type
         int battery_level
         decimal latitude
         decimal longitude
@@ -81,7 +82,7 @@ erDiagram
 
     RENTAL {
         int id PK
-        int scooter_id FK
+        int vehicle_id FK
         int rider_id FK
         datetime start_time
         datetime end_time
@@ -188,11 +189,11 @@ curl -X POST http://YOUR_HOST/api/token \
 | Methode | Endpunkt | Auth | Beschreibung |
 |---------|----------|------|-------------|
 | POST | `/api/token` | – | Token beziehen |
-| GET | `/api/scooters` | – | Alle verfügbaren Scooter |
-| GET | `/api/scooters/<id>` | – | Einzelner Scooter |
-| GET | `/api/provider/scooters` | Provider | Eigene Scooter-Flotte |
+| GET | `/api/vehicles` | – | Alle Fahrzeuge |
+| GET | `/api/vehicles/<id>` | – | Einzelnes Fahrzeug |
+| GET | `/api/provider/vehicles` | Provider | Eigene Fahrzeugflotte |
 | GET | `/api/rentals` | Rider/Provider | Eigene Ausleihen |
-| POST | `/api/rentals/start/<scooter_id>` | Rider | Ausleihe starten |
+| POST | `/api/rentals/start/<vehicle_id>` | Rider | Ausleihe starten |
 | POST | `/api/rentals/end/<rental_id>` | Rider | Ausleihe beenden |
 
 Vollständige API-Dokumentation: [docs/api.md](docs/api.md)
@@ -203,7 +204,7 @@ Vollständige API-Dokumentation: [docs/api.md](docs/api.md)
 pytest
 ```
 
-Die 12 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Scooter-Anlage, Ausleihe, Rückgabe sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
+Die 13 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Fahrzeug-Anlage, Ausleihe, Rückgabe sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
 
 Vollständiges Testprotokoll: [docs/test_protocol.md](docs/test_protocol.md)
 

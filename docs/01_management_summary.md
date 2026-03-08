@@ -24,7 +24,7 @@ Die Anwendung ist wahlweise als Docker-Stack (`docker compose up`) oder als syst
 Die Webanwendung ist vollständig lauffähig und erfüllt alle gestellten Anforderungen:
 
 - Registrierung und Login mit Rollen (Fahrgast / Anbieter)
-- Interaktive Karte mit Echtzeit-Scooterstandorten (OpenStreetMap)
+- Interaktive Karte mit Echtzeit-Fahrzeugstandorten (OpenStreetMap)
 - QR-Code-basierte Entriegelung und minutengenaue Abrechnung
 - RESTful API mit Bearer-Token-Authentifizierung
 - 13 automatisierte pytest-Tests

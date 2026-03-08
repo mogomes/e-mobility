@@ -1,31 +1,31 @@
 from flask import Blueprint, jsonify, request
 
 from ..extensions import db
-from ..models import Rental, Scooter, User
+from ..models import Rental, Vehicle, User
 from ..services import end_rental, start_rental
 
 
 api_bp = Blueprint('api', __name__)
 
 
-def serialize_scooter(scooter: Scooter) -> dict:
+def serialize_vehicle(vehicle: Vehicle) -> dict:
     return {
-        'id': scooter.id,
-        'public_id': scooter.public_id,
-        'name': scooter.name,
-        'vehicle_type': scooter.vehicle_type,
-        'battery_level': scooter.battery_level,
-        'latitude': float(scooter.latitude),
-        'longitude': float(scooter.longitude),
-        'status': scooter.status,
-        'provider': scooter.provider.username,
+        'id': vehicle.id,
+        'public_id': vehicle.public_id,
+        'name': vehicle.name,
+        'vehicle_type': vehicle.vehicle_type,
+        'battery_level': vehicle.battery_level,
+        'latitude': float(vehicle.latitude),
+        'longitude': float(vehicle.longitude),
+        'status': vehicle.status,
+        'provider': vehicle.provider.username,
     }
 
 
 def serialize_rental(rental: Rental) -> dict:
     return {
         'id': rental.id,
-        'scooter_id': rental.scooter_id,
+        'vehicle_id': rental.vehicle_id,
         'rider': rental.rider.username,
         'start_time': rental.start_time.isoformat(),
         'end_time': rental.end_time.isoformat() if rental.end_time else None,
@@ -56,28 +56,28 @@ def token():
     return jsonify({'token': user.api_token, 'role': user.role})
 
 
-@api_bp.route('/scooters', methods=['GET'])
-def scooters():
-    scooters = Scooter.query.order_by(Scooter.id.asc()).all()
-    return jsonify([serialize_scooter(s) for s in scooters])
+@api_bp.route('/vehicles', methods=['GET'])
+def vehicles():
+    vehicles = Vehicle.query.order_by(Vehicle.id.asc()).all()
+    return jsonify([serialize_vehicle(v) for v in vehicles])
 
 
-@api_bp.route('/scooters/<int:scooter_id>', methods=['GET'])
-def scooter_detail(scooter_id):
-    scooter = db.get_or_404(Scooter, scooter_id)
-    return jsonify(serialize_scooter(scooter))
+@api_bp.route('/vehicles/<int:vehicle_id>', methods=['GET'])
+def vehicle_detail(vehicle_id):
+    vehicle = db.get_or_404(Vehicle, vehicle_id)
+    return jsonify(serialize_vehicle(vehicle))
 
 
-@api_bp.route('/provider/scooters', methods=['GET'])
-def provider_scooters():
-    """Listet alle Scooter des authentifizierten Anbieters auf."""
+@api_bp.route('/provider/vehicles', methods=['GET'])
+def provider_vehicles():
+    """Listet alle Vehicle des authentifizierten Anbieters auf."""
     user = api_user_from_request()
     if not user:
         return jsonify({'error': 'missing_or_invalid_token'}), 401
     if user.role != 'provider':
         return jsonify({'error': 'forbidden – nur für Anbieter'}), 403
-    own = Scooter.query.filter_by(provider_id=user.id).order_by(Scooter.id.asc()).all()
-    return jsonify([serialize_scooter(s) for s in own])
+    own = Vehicle.query.filter_by(provider_id=user.id).order_by(Vehicle.id.asc()).all()
+    return jsonify([serialize_vehicle(v) for v in own])
 
 
 @api_bp.route('/rentals', methods=['GET'])
@@ -87,23 +87,23 @@ def rentals():
         return jsonify({'error': 'missing_or_invalid_token'}), 401
 
     if user.role == 'provider':
-        rentals = Rental.query.join(Scooter).filter(Scooter.provider_id == user.id).all()
+        rentals = Rental.query.join(Vehicle).filter(Vehicle.provider_id == user.id).all()
     else:
         rentals = Rental.query.filter_by(rider_id=user.id).all()
     return jsonify([serialize_rental(r) for r in rentals])
 
 
-@api_bp.route('/rentals/start/<int:scooter_id>', methods=['POST'])
-def rentals_start(scooter_id):
+@api_bp.route('/rentals/start/<int:vehicle_id>', methods=['POST'])
+def rentals_start(vehicle_id):
     user = api_user_from_request()
     if not user:
         return jsonify({'error': 'missing_or_invalid_token'}), 401
 
-    scooter = db.get_or_404(Scooter, scooter_id)
+    vehicle = db.get_or_404(Vehicle, vehicle_id)
     data = request.get_json(silent=True) or {}
     unlock_code = data.get('unlock_code', '').strip()
     try:
-        rental = start_rental(user, scooter, unlock_code=unlock_code)
+        rental = start_rental(user, vehicle, unlock_code=unlock_code)
         return jsonify({'message': 'rental_started', 'rental': serialize_rental(rental)}), 201
     except ValueError as exc:
         return jsonify({'error': str(exc)}), 400
