@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Anmelden{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-panel promo-panel">
+    <span class="eyebrow">e-mobility Bern</span>
+    <h1>Grün unterwegs. In Bern zu Hause.</h1>
+    <p>Melde dich an und greife auf deine Roller, Fahrten und Verwaltungsfunktionen in Bern zu.</p>
+    <img src="{{ url_for('static', filename='img/scooter-hero.svg') }}" alt="Grüne E-Scooter Grafik">
+  </div>
+  <section class="form-card auth-panel">
+    <h1>Anmelden</h1>
+    <form method="post">
+      <label>Benutzername
+        <input type="text" name="username" required>
+      </label>
+      <label>Passwort
+        <input type="password" name="password" required>
+      </label>
+      <button type="submit">Anmelden</button>
+    </form>
+    <p class="muted">Demo-Anbieter: provider1 / Provider123!<br>Demo-Fahrgast: rider1 / Rider123!</p>
+  </section>
+</section>
+{% endblock %}

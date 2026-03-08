@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Flotte verwalten{% endblock %}
+{% block content %}
+
+<section class="dashboard-hero">
+  <div class="hero-copy">
+    <span class="eyebrow">Werkzeuge für Anbieter</span>
+    <h1>Flotte in Bern verwalten</h1>
+    <p>Erstelle neue Roller, pflege Akkustand, Standort und Verfügbarkeit und halte deine Flotte für Bern aktuell.</p>
+  </div>
+</section>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Standorte in Bern</span>
+    <h2>Meine Flotte auf der Karte</h2>
+  </div>
+</section>
+<div class="map-card">
+  <div id="flottenkarte" class="map-box"></div>
+</div>
+
+<section class="form-card wide-card">
+  <h2>Neuen Roller anlegen</h2>
+  <form method="post" class="form-grid">
+    <label>Öffentliche Kennung
+      <input type="text" name="public_id" placeholder="BE-2001">
+    </label>
+    <label>Bezeichnung
+      <input type="text" name="name" required>
+    </label>
+    <label>Akkustand in %
+      <input type="number" name="battery_level" min="0" max="100" value="100" required>
+    </label>
+    <label>Breitengrad
+      <input type="number" step="0.000001" name="latitude" value="46.948090" required>
+    </label>
+    <label>Längengrad
+      <input type="number" step="0.000001" name="longitude" value="7.447440" required>
+    </label>
+    <label>Status
+      <select name="status">
+        <option value="{{ scooter_status.AVAILABLE.value }}">Verfügbar</option>
+        <option value="{{ scooter_status.MAINTENANCE.value }}">Wartung</option>
+        <option value="{{ scooter_status.RENTED.value }}">Ausgeliehen</option>
+      </select>
+    </label>
+    <label>Entriegelungscode
+      <input type="text" name="unlock_code" placeholder="BE-1234">
+    </label>
+    <div class="form-actions">
+      <button type="submit">Roller speichern</button>
+    </div>
+  </form>
+</section>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Flottenverwaltung</span>
+    <h2>Meine Roller</h2>
+  </div>
+</section>
+<div class="grid card-grid">
+  {% for scooter in scooters %}
+    <article class="card fleet-card">
+      <div class="card-top">
+        <span class="status-badge {{ scooter.status }}">{{ status_label(scooter.status) }}</span>
+        <span class="battery-badge">🔋 {{ scooter.battery_level }} %</span>
+      </div>
+      <div class="battery-bar">
+        <div class="battery-bar-fill{% if scooter.battery_level < 20 %} critical{% elif scooter.battery_level < 40 %} low{% endif %}"
+             style="width: {{ scooter.battery_level }}%"></div>
+      </div>
+      <div class="scooter-visual">🛴</div>
+      <form method="post" action="{{ url_for('providers.update_scooter', scooter_id=scooter.id) }}">
+        <label>Bezeichnung
+          <input type="text" name="name" value="{{ scooter.name }}" required>
+        </label>
+        <label>Akkustand in %
+          <input type="number" name="battery_level" min="0" max="100" value="{{ scooter.battery_level }}" required>
+        </label>
+        <label>Breitengrad
+          <input type="number" step="0.000001" name="latitude" value="{{ scooter.latitude }}" required>
+        </label>
+        <label>Längengrad
+          <input type="number" step="0.000001" name="longitude" value="{{ scooter.longitude }}" required>
+        </label>
+        <label>Status
+          <select name="status">
+            <option value="available"    {% if scooter.status == 'available'    %}selected{% endif %}>Verfügbar</option>
+            <option value="maintenance"  {% if scooter.status == 'maintenance'  %}selected{% endif %}>Wartung</option>
+            <option value="rented"       {% if scooter.status == 'rented'       %}selected{% endif %}>Ausgeliehen</option>
+          </select>
+        </label>
+        <button type="submit">Änderungen speichern</button>
+      </form>
+      <form method="post" action="{{ url_for('providers.delete_scooter', scooter_id=scooter.id) }}" style="margin-top:.5rem">
+        <button type="submit" class="danger">Roller löschen</button>
+      </form>
+    </article>
+  {% else %}
+    <article class="card empty-card">
+      <h3>Noch keine Fahrzeuge</h3>
+      <p>Lege deinen ersten Roller für Bern an, um die Flotte aufzubauen.</p>
+    </article>
+  {% endfor %}
+</div>
+
+<script>
+  const flottenDaten = {{ map_scooters|tojson }};
+  const flottenkarte = L.map('flottenkarte').setView([46.94809, 7.44744], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap-Mitwirkende'
+  }).addTo(flottenkarte);
+  flottenDaten.forEach((roller) => {
+    if (roller.latitude && roller.longitude) {
+      L.marker([roller.latitude, roller.longitude])
+        .addTo(flottenkarte)
+        .bindPopup(`<strong>${roller.name}</strong><br>${roller.public_id}<br>Akku: ${roller.battery_level}%`);
+    }
+  });
+</script>
+{% endblock %}

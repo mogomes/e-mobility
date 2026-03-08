@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Startseite{% endblock %}
+{% block content %}
+
+<section class="hero hero-grid">
+  <div class="hero-copy">
+    <span class="eyebrow">Bern bewegt sich elektrisch</span>
+    <h1>E-Scooter direkt in der Berner Innenstadt.</h1>
+    <p>e-mobility ist ein Berner Unternehmen für moderne Mikromobilität. Wir verbinden kurze Wege, saubere Energie und eine einfache digitale Ausleihe für Bewohnerinnen, Bewohner und Gäste der Stadt Bern.</p>
+    <div class="actions">
+      <a class="btn" href="{{ url_for('auth.register') }}">Jetzt starten</a>
+      <a class="btn secondary" href="{{ url_for('auth.login') }}">Anmelden</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><strong>Bern</strong><span>lokal verankert</span></div>
+      <div class="stat-card"><strong>100 %</strong><span>elektrisch unterwegs</span></div>
+      <div class="stat-card"><strong>Einfach</strong><span>ausleihen &amp; zurückgeben</span></div>
+    </div>
+  </div>
+  <div class="hero-art">
+    <img src="{{ url_for('static', filename='img/scooter-hero.svg') }}" alt="Illustration eines grünen E-Scooters">
+  </div>
+</section>
+
+<section class="feature-strip">
+  <article class="feature-card">
+    <div class="feature-icon">⚡</div>
+    <h3>Schnell unterwegs</h3>
+    <p>Freie E-Scooter stehen an zentralen Orten in Bern bereit und lassen sich direkt online ausleihen.</p>
+  </article>
+  <article class="feature-card">
+    <div class="feature-icon">🗺️</div>
+    <h3>Bern auf einen Blick</h3>
+    <p>Die Karte zeigt dir verfügbare Fahrzeuge rund um Bahnhof, Bundesplatz, Altstadt und weitere Standorte.</p>
+  </article>
+  <article class="feature-card">
+    <div class="feature-icon">🌿</div>
+    <h3>Grüne Energie</h3>
+    <p>Unsere Flotte steht für leise, emissionsarme Mobilität und eine lebenswerte Stadt Bern.</p>
+  </article>
+</section>
+
+<section class="info-grid">
+  <article class="info-card">
+    <span class="eyebrow">Über uns</span>
+    <h2>Mobilität aus Bern für Bern</h2>
+    <p>Als lokales Unternehmen betreibt e-mobility eine wachsende E-Scooter-Flotte in Bern. Unser Angebot richtet sich an Menschen, die kurze Strecken bequem, flexibel und nachhaltig zurücklegen möchten — vom Bahnhof bis ins Marzili, vom Bundesplatz bis zum Rosengarten.</p>
+  </article>
+  <article class="info-card">
+    <span class="eyebrow">Unser Anspruch</span>
+    <h2>Einfach, verlässlich und städtisch</h2>
+    <p>Wir setzen auf klare Prozesse, faire Preise und eine übersichtliche Verwaltung für Fahrgäste und Anbieter. So entsteht eine Plattform, die Technik und Alltag in Bern sinnvoll verbindet.</p>
+  </article>
+</section>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Standorte in Bern</span>
+    <h2>Unsere Roller auf der Karte</h2>
+  </div>
+</section>
+<div class="map-card">
+  <div id="startseitenkarte" class="map-box"></div>
+</div>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Aktuelle Flotte</span>
+    <h2>Roller in Bern</h2>
+  </div>
+</section>
+<div class="grid card-grid">
+  {% for scooter in scooters %}
+    <article class="card scooter-card">
+      <div class="card-top">
+        <span class="status-badge {{ scooter.status }}">{{ status_label(scooter.status) }}</span>
+        <span class="battery-badge">🔋 {{ scooter.battery_level }} %</span>
+      </div>
+      <div class="battery-bar">
+        <div class="battery-bar-fill{% if scooter.battery_level < 20 %} critical{% elif scooter.battery_level < 40 %} low{% endif %}"
+             style="width: {{ scooter.battery_level }}%"></div>
+      </div>
+      <div class="scooter-visual">🛴</div>
+      <h3>{{ scooter.name }}</h3>
+      <p><strong>Kennung:</strong> {{ scooter.public_id }}</p>
+    </article>
+  {% else %}
+    <article class="card empty-card">
+      <h3>Noch keine Roller</h3>
+      <p>Lege als Anbieter deine erste Flotte an.</p>
+    </article>
+  {% endfor %}
+</div>
+
+<script>
+  const startseitenDaten = {{ map_scooters|tojson }};
+  const startseitenkarte = L.map('startseitenkarte').setView([46.94809, 7.44744], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap-Mitwirkende'
+  }).addTo(startseitenkarte);
+  startseitenDaten.forEach((roller) => {
+    if (roller.latitude && roller.longitude) {
+      L.marker([roller.latitude, roller.longitude])
+        .addTo(startseitenkarte)
+        .bindPopup(`<strong>${roller.name}</strong><br>${roller.public_id}<br>Akku: ${roller.battery_level}%`);
+    }
+  });
+</script>
+{% endblock %}

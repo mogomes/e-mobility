@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Registrierung{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-panel promo-panel">
+    <span class="eyebrow">Konto erstellen</span>
+    <h1>Starte mit e-mobility in Bern.</h1>
+    <p>Als Fahrgast buchst du Fahrten. Als Anbieter verwaltest du deine Flotte, Standorte und Verfügbarkeit in Bern.</p>
+    <div class="hero-stats two-col">
+      <div class="stat-card"><strong>Fahrgast</strong><span>findet freie Fahrzeuge</span></div>
+      <div class="stat-card"><strong>Anbieter</strong><span>pflegt die eigene Flotte</span></div>
+    </div>
+  </div>
+  <section class="form-card auth-panel">
+    <h1>Registrierung</h1>
+    <form method="post">
+      <label>Benutzername
+        <input type="text" name="username" required>
+      </label>
+      <label>E-Mail-Adresse
+        <input type="email" name="email" required>
+      </label>
+      <label>Passwort
+        <input type="password" name="password" required>
+      </label>
+      <label>Rolle
+        <select name="role">
+          <option value="{{ user_role.RIDER.value }}">Fahrgast</option>
+          <option value="{{ user_role.PROVIDER.value }}">Anbieter</option>
+        </select>
+      </label>
+      <label>Zahlungsmittel (für Fahrgäste empfohlen)
+        <input type="text" name="payment_method" placeholder="zum Beispiel Visa **** 4242">
+      </label>
+      <button type="submit">Konto erstellen</button>
+    </form>
+  </section>
+</section>
+{% endblock %}

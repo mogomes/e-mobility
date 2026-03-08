@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Übersicht{% endblock %}
+{% block content %}
+
+<section class="dashboard-hero">
+  <div class="hero-copy">
+    <span class="eyebrow">Willkommen zurück</span>
+    <h1>Guten Tag, {{ current_user.username }}.</h1>
+    <p>Angemeldet als <strong>{{ role_label(current_user.role) }}</strong>. Hier verwaltest du deine Roller, Ausleihen und den API-Zugang.</p>
+  </div>
+  <div class="token-card">
+    <span class="eyebrow">API-Schlüssel</span>
+    <code>{{ current_user.api_token }}</code>
+  </div>
+</section>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Standorte in Bern</span>
+    <h2>{% if current_user.role == 'provider' %}Meine Flotte auf der Karte{% else %}Verfügbare Roller auf der Karte{% endif %}</h2>
+  </div>
+</section>
+<div class="map-card">
+  <div id="uebersichtskarte" class="map-box"></div>
+</div>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Rollerübersicht</span>
+    <h2>{% if current_user.role == 'provider' %}Meine Roller{% else %}Verfügbare Roller{% endif %}</h2>
+  </div>
+</section>
+<div class="grid card-grid">
+  {% for scooter in scooters %}
+    <article class="card scooter-card">
+      <div class="card-top">
+        <span class="status-badge {{ scooter.status }}">{{ status_label(scooter.status) }}</span>
+        <span class="battery-badge">🔋 {{ scooter.battery_level }} %</span>
+      </div>
+      <div class="battery-bar">
+        <div class="battery-bar-fill{% if scooter.battery_level < 20 %} critical{% elif scooter.battery_level < 40 %} low{% endif %}"
+             style="width: {{ scooter.battery_level }}%"></div>
+      </div>
+      <div class="scooter-visual">🛴</div>
+      <h3>{{ scooter.name }}</h3>
+      <p><strong>Kennung:</strong> {{ scooter.public_id }}</p>
+      <p><strong>Koordinaten:</strong> {{ scooter.latitude }}, {{ scooter.longitude }}</p>
+      {% if current_user.role == 'rider' and scooter.status == 'available' %}
+      <form method="post" action="{{ url_for('rentals.start', scooter_id=scooter.id) }}" style="margin-top:.75rem">
+        <button type="submit">Jetzt ausleihen</button>
+      </form>
+      {% endif %}
+    </article>
+  {% else %}
+    <article class="card empty-card">
+      <h3>Keine Roller vorhanden</h3>
+      <p>Hier erscheinen verfügbare Fahrzeuge oder deine eigene Flotte.</p>
+    </article>
+  {% endfor %}
+</div>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Letzte Fahrten</span>
+    <h2>Ausleihen im Überblick</h2>
+  </div>
+</section>
+<div class="grid card-grid">
+  {% for rental in rentals %}
+    <article class="card rental-card">
+      <div class="card-top">
+        <span class="status-badge {{ rental.status }}">{{ status_label(rental.status) }}</span>
+      </div>
+      <h3>{{ rental.scooter.name }}</h3>
+      <p><strong>Ausleihe Nr.:</strong> {{ rental.id }}</p>
+      <p><strong>Beginn:</strong> {{ rental.start_time.strftime('%d.%m.%Y %H:%M') if rental.start_time else '—' }}</p>
+      <p><strong>Ende:</strong> {{ rental.end_time.strftime('%d.%m.%Y %H:%M') if rental.end_time else '—' }}</p>
+      <p><strong>Preis:</strong> {% if rental.total_price %}CHF {{ '%.2f'|format(rental.total_price|float) }}{% else %}—{% endif %}</p>
+      {% if current_user.role == 'rider' and rental.status == 'active' %}
+      <form method="post" action="{{ url_for('rentals.end', rental_id=rental.id) }}" style="margin-top:.85rem">
+        <label>Endkilometer
+          <input type="number" step="0.01" name="end_km" value="{{ rental.start_km }}" required>
+        </label>
+        <label>Breitengrad
+          <input type="number" step="0.000001" name="latitude" value="{{ rental.scooter.latitude }}" required>
+        </label>
+        <label>Längengrad
+          <input type="number" step="0.000001" name="longitude" value="{{ rental.scooter.longitude }}" required>
+        </label>
+        <button type="submit">Ausleihe beenden</button>
+      </form>
+      {% endif %}
+    </article>
+  {% else %}
+    <article class="card empty-card">
+      <h3>Keine Ausleihen vorhanden</h3>
+      <p>Sobald Fahrten gestartet werden, erscheinen sie hier mit Status und Preis.</p>
+    </article>
+  {% endfor %}
+</div>
+
+<script>
+  const uebersichtsDaten = {{ map_scooters|tojson }};
+  const uebersichtskarte = L.map('uebersichtskarte').setView([46.94809, 7.44744], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap-Mitwirkende'
+  }).addTo(uebersichtskarte);
+  uebersichtsDaten.forEach((roller) => {
+    if (roller.latitude && roller.longitude) {
+      L.marker([roller.latitude, roller.longitude])
+        .addTo(uebersichtskarte)
+        .bindPopup(`<strong>${roller.name}</strong><br>${roller.public_id}<br>Akku: ${roller.battery_level}%`);
+    }
+  });
+</script>
+{% endblock %}
