@@ -17,7 +17,7 @@
 <section class="section-headline">
   <div>
     <span class="eyebrow">Standorte in Bern</span>
-    <h2>{% if current_user.role == 'provider' %}Meine Flotte auf der Karte{% else %}Verfügbare Roller auf der Karte{% endif %}</h2>
+    <h2>{% if current_user.role == 'provider' %}Meine Flotte auf der Karte{% else %}Verfügbare Fahrzeuge auf der Karte{% endif %}</h2>
   </div>
 </section>
 <div class="map-card">
@@ -27,7 +27,7 @@
 <section class="section-headline">
   <div>
     <span class="eyebrow">Rollerübersicht</span>
-    <h2>{% if current_user.role == 'provider' %}Meine Roller{% else %}Verfügbare Roller{% endif %}</h2>
+    <h2>{% if current_user.role == 'provider' %}Meine Fahrzeuge{% else %}Verfügbare Fahrzeuge{% endif %}</h2>
   </div>
 </section>
 <div class="grid card-grid">
@@ -41,7 +41,8 @@
         <div class="battery-bar-fill{% if scooter.battery_level < 20 %} critical{% elif scooter.battery_level < 40 %} low{% endif %}"
              style="width: {{ scooter.battery_level }}%"></div>
       </div>
-      <div class="scooter-visual">🛴</div>
+      <div class="scooter-visual">{{ vehicle_type_emoji(scooter.vehicle_type) }}</div>
+      <p class="vehicle-type-label">{{ vehicle_type_label(scooter.vehicle_type) }}</p>
       <h3>{{ scooter.name }}</h3>
       <p><strong>Kennung:</strong> {{ scooter.public_id }}</p>
       <p><strong>Koordinaten:</strong> {{ scooter.latitude }}, {{ scooter.longitude }}</p>
@@ -62,7 +63,7 @@
     </article>
   {% else %}
     <article class="card empty-card">
-      <h3>Keine Roller vorhanden</h3>
+      <h3>Keine Fahrzeuge vorhanden</h3>
       <p>Hier erscheinen verfügbare Fahrzeuge oder deine eigene Flotte.</p>
     </article>
   {% endfor %}
@@ -119,7 +120,7 @@
     if (roller.latitude && roller.longitude) {
       L.marker([roller.latitude, roller.longitude])
         .addTo(uebersichtskarte)
-        .bindPopup(`<strong>${roller.name}</strong><br>${roller.public_id}<br>Akku: ${roller.battery_level}%`);
+        .bindPopup(`<strong>${roller.name}</strong><br>${roller.public_id}<br>Typ: ${roller.vehicle_type}<br>Akku: ${roller.battery_level}%`);
     }
   });
 

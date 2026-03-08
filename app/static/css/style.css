@@ -423,6 +423,16 @@ button.danger:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
 .battery-bar-fill.low      { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .battery-bar-fill.critical { background: linear-gradient(90deg, #ef4444, #f87171); }
 
+/* === VEHICLE TYPE === */
+.vehicle-type-label {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--primary-dark);
+  margin: -.25rem 0 .5rem;
+}
+
 /* === QR CODE === */
 .qr-wrapper {
   display: flex;

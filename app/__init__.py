@@ -3,7 +3,7 @@ from flask import Flask
 from config import Config
 
 from .extensions import db, login_manager, migrate
-from .presentation import role_label, status_label
+from .presentation import role_label, status_label, vehicle_type_emoji, vehicle_type_label
 from .services import seed_demo_data
 
 
@@ -36,6 +36,8 @@ def create_app(test_config=None):
         return {
             'status_label': status_label,
             'role_label': role_label,
+            'vehicle_type_label': vehicle_type_label,
+            'vehicle_type_emoji': vehicle_type_emoji,
         }
 
     with app.app_context():

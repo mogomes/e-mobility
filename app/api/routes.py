@@ -13,6 +13,7 @@ def serialize_scooter(scooter: Scooter) -> dict:
         'id': scooter.id,
         'public_id': scooter.public_id,
         'name': scooter.name,
+        'vehicle_type': scooter.vehicle_type,
         'battery_level': scooter.battery_level,
         'latitude': float(scooter.latitude),
         'longitude': float(scooter.longitude),

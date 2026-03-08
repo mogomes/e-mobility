@@ -28,6 +28,12 @@ class UserRole(str, Enum):
     PROVIDER = 'provider'
 
 
+class VehicleType(str, Enum):
+    E_SCOOTER = 'e_scooter'
+    E_BIKE = 'e_bike'
+    E_CARGO = 'e_cargo'
+
+
 class ScooterStatus(str, Enum):
     AVAILABLE = 'available'
     RENTED = 'rented'
@@ -74,6 +80,7 @@ class Scooter(db.Model):
     battery_level = db.Column(db.Integer, nullable=False, default=100)
     latitude = db.Column(db.Numeric(9, 6), nullable=False)
     longitude = db.Column(db.Numeric(9, 6), nullable=False)
+    vehicle_type = db.Column(db.String(20), nullable=False, default=VehicleType.E_SCOOTER.value)
     status = db.Column(db.String(20), nullable=False, default=ScooterStatus.AVAILABLE.value)
     unlock_code = db.Column(db.String(32), nullable=False)
     provider_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)

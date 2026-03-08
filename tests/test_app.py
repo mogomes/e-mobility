@@ -13,7 +13,7 @@ def test_smoke():
 def test_homepage_loads(client):
     response = client.get('/')
     assert response.status_code == 200
-    assert b'E-Scooter' in response.data
+    assert 'E-Fahrzeuge'.encode('utf-8') in response.data
 
 
 def test_register_user(client):
@@ -52,6 +52,7 @@ def test_provider_can_create_scooter(client, provider_credentials, app):
         data={
             'public_id': 'SC-9999',
             'name': 'Test Scooter',
+            'vehicle_type': 'e_scooter',
             'battery_level': 88,
             'latitude': 46.948799,
             'longitude': 7.439136,

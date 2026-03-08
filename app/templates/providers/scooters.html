@@ -6,7 +6,7 @@
   <div class="hero-copy">
     <span class="eyebrow">Werkzeuge für Anbieter</span>
     <h1>Flotte in Bern verwalten</h1>
-    <p>Erstelle neue Roller, pflege Akkustand, Standort und Verfügbarkeit und halte deine Flotte für Bern aktuell.</p>
+    <p>Erstelle neue Fahrzeuge (E-Scooter, E-Bike, E-Cargo), pflege Akkustand, Standort und Verfügbarkeit und halte deine Flotte für Bern aktuell.</p>
   </div>
 </section>
 
@@ -21,13 +21,20 @@
 </div>
 
 <section class="form-card wide-card">
-  <h2>Neuen Roller anlegen</h2>
+  <h2>Neues Fahrzeug anlegen</h2>
   <form method="post" class="form-grid">
     <label>Öffentliche Kennung
       <input type="text" name="public_id" placeholder="BE-2001">
     </label>
     <label>Bezeichnung
       <input type="text" name="name" required>
+    </label>
+    <label>Fahrzeugtyp
+      <select name="vehicle_type">
+        <option value="{{ vehicle_type.E_SCOOTER.value }}">🛴 E-Scooter</option>
+        <option value="{{ vehicle_type.E_BIKE.value }}">🚲 E-Bike</option>
+        <option value="{{ vehicle_type.E_CARGO.value }}">🚐 E-Cargo</option>
+      </select>
     </label>
     <label>Akkustand in %
       <input type="number" name="battery_level" min="0" max="100" value="100" required>
@@ -49,7 +56,7 @@
       <input type="text" name="unlock_code" placeholder="BE-1234">
     </label>
     <div class="form-actions">
-      <button type="submit">Roller speichern</button>
+      <button type="submit">Fahrzeug speichern</button>
     </div>
   </form>
 </section>
@@ -57,7 +64,7 @@
 <section class="section-headline">
   <div>
     <span class="eyebrow">Flottenverwaltung</span>
-    <h2>Meine Roller</h2>
+    <h2>Meine Fahrzeuge</h2>
   </div>
 </section>
 <div class="grid card-grid">
@@ -71,10 +78,18 @@
         <div class="battery-bar-fill{% if scooter.battery_level < 20 %} critical{% elif scooter.battery_level < 40 %} low{% endif %}"
              style="width: {{ scooter.battery_level }}%"></div>
       </div>
-      <div class="scooter-visual">🛴</div>
+      <div class="scooter-visual">{{ vehicle_type_emoji(scooter.vehicle_type) }}</div>
+      <p class="vehicle-type-label">{{ vehicle_type_label(scooter.vehicle_type) }}</p>
       <form method="post" action="{{ url_for('providers.update_scooter', scooter_id=scooter.id) }}">
         <label>Bezeichnung
           <input type="text" name="name" value="{{ scooter.name }}" required>
+        </label>
+        <label>Fahrzeugtyp
+          <select name="vehicle_type">
+            <option value="e_scooter" {% if scooter.vehicle_type == 'e_scooter' %}selected{% endif %}>🛴 E-Scooter</option>
+            <option value="e_bike"    {% if scooter.vehicle_type == 'e_bike'    %}selected{% endif %}>🚲 E-Bike</option>
+            <option value="e_cargo"   {% if scooter.vehicle_type == 'e_cargo'   %}selected{% endif %}>🚐 E-Cargo</option>
+          </select>
         </label>
         <label>Akkustand in %
           <input type="number" name="battery_level" min="0" max="100" value="{{ scooter.battery_level }}" required>
@@ -95,13 +110,13 @@
         <button type="submit">Änderungen speichern</button>
       </form>
       <form method="post" action="{{ url_for('providers.delete_scooter', scooter_id=scooter.id) }}" style="margin-top:.5rem">
-        <button type="submit" class="danger">Roller löschen</button>
+        <button type="submit" class="danger">Fahrzeug löschen</button>
       </form>
     </article>
   {% else %}
     <article class="card empty-card">
       <h3>Noch keine Fahrzeuge</h3>
-      <p>Lege deinen ersten Roller für Bern an, um die Flotte aufzubauen.</p>
+      <p>Lege dein erstes Fahrzeug für Bern an, um die Flotte aufzubauen.</p>
     </article>
   {% endfor %}
 </div>
@@ -113,11 +128,11 @@
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap-Mitwirkende'
   }).addTo(flottenkarte);
-  flottenDaten.forEach((roller) => {
-    if (roller.latitude && roller.longitude) {
-      L.marker([roller.latitude, roller.longitude])
+  flottenDaten.forEach((fahrzeug) => {
+    if (fahrzeug.latitude && fahrzeug.longitude) {
+      L.marker([fahrzeug.latitude, fahrzeug.longitude])
         .addTo(flottenkarte)
-        .bindPopup(`<strong>${roller.name}</strong><br>${roller.public_id}<br>Akku: ${roller.battery_level}%`);
+        .bindPopup(`<strong>${fahrzeug.name}</strong><br>${fahrzeug.public_id}<br>Typ: ${fahrzeug.vehicle_type}<br>Akku: ${fahrzeug.battery_level}%`);
     }
   });
 </script>

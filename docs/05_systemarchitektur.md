@@ -18,7 +18,7 @@ Die Geschäftslogik (Ausleihe starten/beenden, Preisberechnung, Validierungen) i
 |---|---|---|
 | `main` | `/` | Startseite, Dashboard |
 | `auth` | `/auth` | Registrierung, Login, Logout |
-| `providers` | `/providers` | Scooter-Verwaltung für Anbieter |
+| `providers` | `/providers` | Fahrzeugverwaltung für Anbieter |
 | `rentals` | `/rentals` | Start und Ende von Ausleihen (Web) |
 | `api` | `/api` | RESTful API-Endpunkte |
 
@@ -47,6 +47,7 @@ erDiagram
         int     id           PK
         string  public_id    UK
         string  name
+        string  vehicle_type
         int     battery_level
         decimal latitude
         decimal longitude
@@ -78,6 +79,7 @@ erDiagram
 
 **Datenbank-Constraints (PostgreSQL):**
 - `users.role` ∈ `{rider, provider}`
+- `scooters.vehicle_type` ∈ `{e_scooter, e_bike, e_cargo}`
 - `scooters.status` ∈ `{available, rented, maintenance}`
 - `scooters.battery_level` ∈ 0–100
 - `rentals.status` ∈ `{active, completed}`

@@ -65,6 +65,7 @@ curl http://YOUR_HOST/api/scooters
     "id": 1,
     "public_id": "SC-3001",
     "name": "Bahnhof Bern",
+    "vehicle_type": "e_scooter",
     "battery_level": 94,
     "latitude": 46.948799,
     "longitude": 7.439136,
@@ -72,12 +73,13 @@ curl http://YOUR_HOST/api/scooters
     "provider": "provider1"
   },
   {
-    "id": 2,
-    "public_id": "SC-3002",
-    "name": "Bundesplatz",
-    "battery_level": 88,
-    "latitude": 46.947974,
-    "longitude": 7.443131,
+    "id": 3,
+    "public_id": "SC-3003",
+    "name": "Zytglogge",
+    "vehicle_type": "e_bike",
+    "battery_level": 81,
+    "latitude": 46.948271,
+    "longitude": 7.447599,
     "status": "rented",
     "provider": "provider1"
   }
@@ -101,6 +103,7 @@ curl http://YOUR_HOST/api/scooters/1
   "id": 1,
   "public_id": "SC-3001",
   "name": "Bahnhof Bern",
+  "vehicle_type": "e_scooter",
   "battery_level": 94,
   "latitude": 46.948799,
   "longitude": 7.439136,
@@ -109,7 +112,9 @@ curl http://YOUR_HOST/api/scooters/1
 }
 ```
 
-**Fehler (404 Not Found):** Scooter-ID existiert nicht.
+**Mögliche Werte für `vehicle_type`:** `e_scooter` 🛴, `e_bike` 🚲, `e_cargo` 🚐
+
+**Fehler (404 Not Found):** Fahrzeug-ID existiert nicht.
 
 ---
 
@@ -194,8 +199,8 @@ curl -X POST http://YOUR_HOST/api/rentals/start/1 \
 
 **Fehlerfälle (400 Bad Request):**
 ```json
-{ "error": "Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Roller scannen." }
-{ "error": "Roller ist derzeit nicht verfügbar." }
+{ "error": "Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Fahrzeug scannen." }
+{ "error": "Fahrzeug ist derzeit nicht verfügbar." }
 { "error": "Bitte zuerst ein Zahlungsmittel hinterlegen." }
 { "error": "Es existiert bereits eine aktive Ausleihe." }
 { "error": "Nur Fahrgäste dürfen Fahrzeuge ausleihen." }

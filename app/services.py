@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from .extensions import db
-from .models import Rental, RentalStatus, Scooter, ScooterStatus, User, UserRole, utcnow
+from .models import Rental, RentalStatus, Scooter, ScooterStatus, User, UserRole, VehicleType, utcnow
 
 BERN_SCOOTERS = [
     {
@@ -12,6 +12,7 @@ BERN_SCOOTERS = [
         'longitude': 7.439136,
         'status': ScooterStatus.AVAILABLE.value,
         'unlock_code': 'QR-3001',
+        'vehicle_type': VehicleType.E_SCOOTER.value,
     },
     {
         'public_id': 'SC-3002',
@@ -21,6 +22,7 @@ BERN_SCOOTERS = [
         'longitude': 7.443131,
         'status': ScooterStatus.AVAILABLE.value,
         'unlock_code': 'QR-3002',
+        'vehicle_type': VehicleType.E_SCOOTER.value,
     },
     {
         'public_id': 'SC-3003',
@@ -30,6 +32,7 @@ BERN_SCOOTERS = [
         'longitude': 7.447599,
         'status': ScooterStatus.AVAILABLE.value,
         'unlock_code': 'QR-3003',
+        'vehicle_type': VehicleType.E_BIKE.value,
     },
     {
         'public_id': 'SC-3004',
@@ -39,6 +42,7 @@ BERN_SCOOTERS = [
         'longitude': 7.458099,
         'status': ScooterStatus.AVAILABLE.value,
         'unlock_code': 'QR-3004',
+        'vehicle_type': VehicleType.E_BIKE.value,
     },
     {
         'public_id': 'SC-3005',
@@ -48,6 +52,7 @@ BERN_SCOOTERS = [
         'longitude': 7.460742,
         'status': ScooterStatus.AVAILABLE.value,
         'unlock_code': 'QR-3005',
+        'vehicle_type': VehicleType.E_CARGO.value,
     },
     {
         'public_id': 'SC-3006',
@@ -57,6 +62,7 @@ BERN_SCOOTERS = [
         'longitude': 7.442301,
         'status': ScooterStatus.AVAILABLE.value,
         'unlock_code': 'QR-3006',
+        'vehicle_type': VehicleType.E_SCOOTER.value,
     },
 ]
 
@@ -151,9 +157,9 @@ def start_rental(user: User, scooter: Scooter, unlock_code: str | None = None) -
     if not user.payment_method:
         raise ValueError('Bitte zuerst ein Zahlungsmittel hinterlegen.')
     if scooter.status != ScooterStatus.AVAILABLE.value:
-        raise ValueError('Roller ist derzeit nicht verfügbar.')
+        raise ValueError('Fahrzeug ist derzeit nicht verfügbar.')
     if unlock_code is None or unlock_code.strip() != scooter.unlock_code:
-        raise ValueError('Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Roller scannen.')
+        raise ValueError('Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Fahrzeug scannen.')
     active_rental = Rental.query.filter_by(rider_id=user.id, status=RentalStatus.ACTIVE.value).first()
     if active_rental:
         raise ValueError('Es existiert bereits eine aktive Ausleihe.')

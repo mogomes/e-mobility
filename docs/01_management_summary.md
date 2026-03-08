@@ -2,7 +2,7 @@
 
 ## Vorhaben
 
-Im Rahmen der Praxisarbeit DBWE.TA1A.PA wurde eine internetfähige Webanwendung für den Verleih von E-Scootern entwickelt. Die Plattform richtet sich an zwei Nutzergruppen: **Anbieter**, die eine Roller-Flotte verwalten, und **Fahrgäste**, die Roller ausleihen, fahren und bezahlen. Das Projekt setzt die Normaufgabe gemäss Aufgabenstellung vollständig um.
+Im Rahmen der Praxisarbeit DBWE.TA1A.PA wurde eine internetfähige Webanwendung für den Verleih von Elektrofahrzeugen entwickelt. Die Plattform unterstützt verschiedene Fahrzeugtypen (E-Scooter 🛴, E-Bike 🚲, E-Cargo 🚐) und richtet sich an zwei Nutzergruppen: **Anbieter**, die eine gemischte Fahrzeugflotte verwalten, und **Fahrgäste**, die Fahrzeuge ausleihen, fahren und bezahlen. Das Projekt setzt die Normaufgabe gemäss Aufgabenstellung vollständig um.
 
 ## Technologie und Infrastruktur
 

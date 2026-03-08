@@ -9,7 +9,16 @@ Für die Prüfung der Anwendung stehen folgende Demo-Benutzer zur Verfügung:
 | Anbieter | `provider1` | `Provider123!` |
 | Fahrgast | `rider1` | `Rider123!` |
 
-Demo-Scooter und ihre Entriegelungscodes: `QR-3001` (Bahnhof Bern), `QR-3002` (Bundesplatz), `QR-3003` (Zytglogge), `QR-3004` (Bärengraben), `QR-3005` (Rosengarten), `QR-3006` (Marzili)
+Demo-Fahrzeuge und ihre Entriegelungscodes:
+
+| Code | Standort | Fahrzeugtyp |
+|---|---|---|
+| `QR-3001` | Bahnhof Bern | 🛴 E-Scooter |
+| `QR-3002` | Bundesplatz | 🛴 E-Scooter |
+| `QR-3003` | Zytglogge | 🚲 E-Bike |
+| `QR-3004` | Bärengraben | 🚲 E-Bike |
+| `QR-3005` | Rosengarten | 🚐 E-Cargo |
+| `QR-3006` | Marzili | 🛴 E-Scooter |
 
 ---
 
@@ -41,29 +50,29 @@ Nach dem Login erscheint das persönliche Dashboard. Die Ansicht ist rollenabhä
 ### Ansicht Fahrgast
 
 - **Token-Karte** (oben): zeigt den persönlichen API-Schlüssel für den Zugriff via API-Client.
-- **Karte** (Mitte): interaktive OpenStreetMap-Karte mit den aktuellen Standorten aller Scooter in Bern.
-- **Verfügbare Roller**: Übersicht aller Scooter mit Status, Akkustand und Standortkoordinaten. Scooter mit Status *Verfügbar* können direkt ausgeliehen werden.
+- **Karte** (Mitte): interaktive OpenStreetMap-Karte mit den aktuellen Standorten aller Fahrzeuge in Bern.
+- **Verfügbare Fahrzeuge**: Übersicht aller Fahrzeuge mit Typ, Status, Akkustand, QR-Code und Standortkoordinaten. Fahrzeuge mit Status *Verfügbar* können direkt ausgeliehen werden.
 - **Letzte Fahrten**: Ausleihen mit Start- und Endzeitpunkt, Preis und Status.
 
 ### Ansicht Anbieter
 
 - **Token-Karte** (oben): API-Schlüssel für den Zugriff als Anbieter.
 - **Karte** (Mitte): zeigt die eigene Flotte auf der Karte.
-- **Meine Roller**: alle eigenen Scooter mit Status, Akku und Koordinaten.
-- **Ausleihen im Überblick**: aktuelle und abgeschlossene Fahrten auf den eigenen Rollern.
+- **Meine Fahrzeuge**: alle eigenen Fahrzeuge mit Typ, Status, Akku und Koordinaten.
+- **Ausleihen im Überblick**: aktuelle und abgeschlossene Fahrten auf den eigenen Fahrzeugen.
 
 ---
 
-## 4. Roller ausleihen (Fahrgast)
+## 4. Fahrzeug ausleihen (Fahrgast)
 
-1. Im Dashboard unter «Verfügbare Roller» einen Scooter mit Status **Verfügbar** (grüner Badge) auswählen.
-2. Im Formular des gewünschten Rollers den **QR-Code / Entriegelungscode** eingeben (z. B. `QR-3001` für den Roller am Bahnhof Bern).
+1. Im Dashboard unter «Verfügbare Fahrzeuge» ein Fahrzeug mit Status **Verfügbar** (grüner Badge) auswählen. Der Fahrzeugtyp (🛴 E-Scooter, 🚲 E-Bike, 🚐 E-Cargo) ist auf der Karte und der Karte sichtbar.
+2. Der QR-Code des Fahrzeugs wird direkt auf der Karte angezeigt. Den **Entriegelungscode** (z. B. `QR-3001`) in das Eingabefeld eingeben.
 3. «Jetzt ausleihen» klicken.
-4. Bei korrektem Code wird die Ausleihe gestartet: Der Roller wechselt zu «Ausgeliehen», und unter «Letzte Fahrten» erscheint ein neuer Eintrag mit Status *Aktiv*.
+4. Bei korrektem Code wird die Ausleihe gestartet: Das Fahrzeug wechselt zu «Ausgeliehen», und unter «Letzte Fahrten» erscheint ein neuer Eintrag mit Status *Aktiv*.
 
 **Fehlermöglichkeiten:**
 - Falscher Entriegelungscode → Fehlermeldung, keine Ausleihe
-- Scooter bereits ausgeliehen → Fehlermeldung
+- Fahrzeug bereits ausgeliehen → Fehlermeldung
 - Kein Zahlungsmittel hinterlegt → Fehlermeldung mit Hinweis auf Profileinstellung
 
 ---
@@ -72,8 +81,8 @@ Nach dem Login erscheint das persönliche Dashboard. Die Ansicht ist rollenabhä
 
 1. Im Dashboard unter «Letzte Fahrten» die aktive Ausleihe (Status *Aktiv*) finden.
 2. Das Rückgabe-Formular ausfüllen:
-   - **Endkilometer**: aktueller Kilometerstand des Rollers
-   - **Breitengrad / Längengrad**: aktueller Standort des Rollers (GPS-Koordinaten)
+   - **Endkilometer**: aktueller Kilometerstand des Fahrzeugs
+   - **Breitengrad / Längengrad**: aktueller Standort des Fahrzeugs (GPS-Koordinaten)
 3. «Ausleihe beenden» klicken.
 4. Der Gesamtpreis wird berechnet und angezeigt:
 
@@ -89,24 +98,25 @@ Beispiel: 20 Minuten → CHF 1.50 + CHF 7.00 = **CHF 8.50**
 
 Die Flottenverwaltung ist unter `http://YOUR_HOST/providers/scooters` erreichbar (Direktlink im Navigationsmenü).
 
-### Neuen Roller anlegen
+### Neues Fahrzeug anlegen
 
-1. Formular «Neuen Roller anlegen» ausfüllen:
+1. Formular «Neues Fahrzeug anlegen» ausfüllen:
    - **Öffentliche Kennung** (optional, wird automatisch vergeben falls leer)
    - **Bezeichnung** (Standortname oder Modellbezeichnung)
+   - **Fahrzeugtyp**: 🛴 E-Scooter / 🚲 E-Bike / 🚐 E-Cargo
    - **Akkustand** in Prozent (0–100)
    - **Breitengrad und Längengrad** (Startstandort)
    - **Status**: Verfügbar / Wartung / Ausgeliehen
    - **Entriegelungscode** (QR-Code, den Fahrgäste eingeben müssen; wird automatisch generiert falls leer)
-2. «Roller speichern» klicken.
+2. «Fahrzeug speichern» klicken.
 
-### Roller bearbeiten
+### Fahrzeug bearbeiten
 
-Jeder Roller in der Flottenliste hat ein eingebettetes Bearbeitungsformular. Nach Änderungen «Änderungen speichern» klicken.
+Jedes Fahrzeug in der Flottenliste hat ein eingebettetes Bearbeitungsformular inkl. Fahrzeugtyp-Auswahl. Nach Änderungen «Änderungen speichern» klicken.
 
-### Roller löschen
+### Fahrzeug löschen
 
-«Roller löschen» (roter Button) – die Aktion ist sofort wirksam und kann nicht rückgängig gemacht werden.
+«Fahrzeug löschen» (roter Button) – die Aktion ist sofort wirksam und kann nicht rückgängig gemacht werden.
 
 ---
 

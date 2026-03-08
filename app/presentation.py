@@ -1,4 +1,4 @@
-from .models import RentalStatus, ScooterStatus, UserRole
+from .models import RentalStatus, ScooterStatus, UserRole, VehicleType
 
 
 def status_label(value: str) -> str:
@@ -18,3 +18,21 @@ def role_label(value: str) -> str:
         UserRole.PROVIDER.value: 'Anbieter',
     }
     return mapping.get(value, str(value))
+
+
+def vehicle_type_label(value: str) -> str:
+    mapping = {
+        VehicleType.E_SCOOTER.value: 'E-Scooter',
+        VehicleType.E_BIKE.value: 'E-Bike',
+        VehicleType.E_CARGO.value: 'E-Cargo',
+    }
+    return mapping.get(value, str(value))
+
+
+def vehicle_type_emoji(value: str) -> str:
+    mapping = {
+        VehicleType.E_SCOOTER.value: '🛴',
+        VehicleType.E_BIKE.value: '🚲',
+        VehicleType.E_CARGO.value: '🚐',
+    }
+    return mapping.get(value, '🛴')
