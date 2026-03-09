@@ -9,16 +9,32 @@ Für die Prüfung der Anwendung stehen folgende Demo-Benutzer zur Verfügung:
 | Anbieter | `provider1` | `Provider123!` |
 | Fahrgast | `rider1` | `Rider123!` |
 
-Demo-Fahrzeuge und ihre Entriegelungscodes:
+Demo-Fahrzeuge und ihre Entriegelungscodes (18 verfügbar, 2 in Wartung):
 
-| Code | Standort | Fahrzeugtyp |
-|---|---|---|
-| `QR-3001` | Bahnhof Bern | 🛴 E-Scooter |
-| `QR-3002` | Bundesplatz | 🛴 E-Scooter |
-| `QR-3003` | Zytglogge | 🚲 E-Bike |
-| `QR-3004` | Bärengraben | 🚲 E-Bike |
-| `QR-3005` | Rosengarten | 🚐 E-Cargo |
-| `QR-3006` | Marzili | 🛴 E-Scooter |
+| Code | Kennung | Standort | Fahrzeugtyp | Status |
+|---|---|---|---|---|
+| `QR-3001` | BE-3001 | Bahnhof Bern | 🛴 E-Scooter | Verfügbar |
+| `QR-3002` | BE-3002 | Bundesplatz | 🛴 E-Scooter | Verfügbar |
+| `QR-3003` | BE-3003 | Zytglogge | 🚲 E-Bike | Verfügbar |
+| `QR-3004` | BE-3004 | Bärengraben | 🚲 E-Bike | Verfügbar |
+| `QR-3005` | BE-3005 | Rosengarten | 🚐 E-Cargo | Verfügbar |
+| `QR-3006` | BE-3006 | Marzili | 🛴 E-Scooter | Verfügbar |
+| `QR-3007` | BE-3007 | Kornhausplatz | 🛴 E-Scooter | Verfügbar |
+| `QR-3008` | BE-3008 | Münster | 🚲 E-Bike | Verfügbar |
+| `QR-3009` | BE-3009 | Helvetiaplatz | 🛴 E-Scooter | Verfügbar |
+| `QR-3010` | BE-3010 | Waisenhausplatz | 🚐 E-Cargo | Verfügbar |
+| `QR-3011` | BE-3011 | Breitenrain | 🛴 E-Scooter | Verfügbar |
+| `QR-3012` | BE-3012 | Länggasse | 🚲 E-Bike | Verfügbar |
+| — | BE-3013 | Bremgartenwald | 🚐 E-Cargo | ⚙️ Wartung |
+| `QR-3014` | BE-3014 | Burgernziel | 🛴 E-Scooter | Verfügbar |
+| `QR-3015` | BE-3015 | Viktoriapark | 🚲 E-Bike | Verfügbar |
+| `QR-3016` | BE-3016 | Köniz Dorf | 🛴 E-Scooter | Verfügbar |
+| `QR-3017` | BE-3017 | Ostermundigen Zentrum | 🚲 E-Bike | Verfügbar |
+| — | BE-3018 | Bümpliz Bahnhof | 🛴 E-Scooter | ⚙️ Wartung |
+| `QR-3019` | BE-3019 | Weissenbühl | 🚐 E-Cargo | Verfügbar |
+| `QR-3020` | BE-3020 | Universität Bern | 🚲 E-Bike | Verfügbar |
+
+> **Hinweis:** Fahrzeuge mit Status *Wartung* sind nicht ausleihbar und zeigen keinen QR-Code.
 
 ---
 
@@ -27,7 +43,7 @@ Demo-Fahrzeuge und ihre Entriegelungscodes:
 1. Die Seite `http://YOUR_HOST/auth/register` aufrufen.
 2. **Benutzername**, **E-Mail-Adresse** und **Passwort** eingeben.
 3. **Rolle** wählen:
-   - *Fahrgast* – kann Roller ausleihen und Fahrten buchen
+   - *Fahrgast* – kann Fahrzeug ausleihen und Fahrten buchen
    - *Anbieter* – verwaltet eine eigene Scooter-Flotte
 4. Fahrgäste sollten ein **Zahlungsmittel** hinterlegen (z. B. `Visa **** 4242`). Ohne Zahlungsmittel ist keine Ausleihe möglich.
 5. «Konto erstellen» klicken. Bei Erfolg erfolgt eine Weiterleitung zur Anmeldeseite.

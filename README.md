@@ -102,7 +102,7 @@ Datei `.env` im Projektwurzelverzeichnis anlegen (Vorlage: `.env.example`):
 FLASK_APP=run.py
 FLASK_ENV=development
 SECRET_KEY=bitte-durch-langen-zufallswert-ersetzen
-DATABASE_URL=postgresql+psycopg://escooter:strongpassword@localhost:5432/escooterdb
+DATABASE_URL=postgresql+psycopg://emobility:strongpassword@localhost:5432/emobilitydb
 APP_BASE_URL=http://127.0.0.1:5000
 PORT=5000
 ```
@@ -132,9 +132,9 @@ sudo -u postgres psql
 ```
 
 ```sql
-CREATE DATABASE escooterdb;
-CREATE USER escooter WITH PASSWORD 'strongpassword';
-GRANT ALL PRIVILEGES ON DATABASE escooterdb TO escooter;
+CREATE DATABASE emobilitydb;
+CREATE USER emobility WITH PASSWORD 'strongpassword';
+GRANT ALL PRIVILEGES ON DATABASE emobilitydb TO emobility;
 ```
 
 ### 2. Virtuelle Umgebung und Abhängigkeiten

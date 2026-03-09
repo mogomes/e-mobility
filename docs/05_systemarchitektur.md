@@ -198,13 +198,13 @@ pip install -r requirements.txt
 # DATABASE_URL, SECRET_KEY, APP_BASE_URL
 
 # 3. Systemd-Dienst installieren
-sudo cp deploy/escooter.service /etc/systemd/system/
+sudo cp deploy/emobility.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now escooter
+sudo systemctl enable --now emobility
 
 # 4. Nginx als Reverse Proxy konfigurieren
-sudo cp deploy/nginx.conf /etc/nginx/sites-available/escooter
-sudo ln -s /etc/nginx/sites-available/escooter /etc/nginx/sites-enabled/
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/emobility
+sudo ln -s /etc/nginx/sites-available/emobility /etc/nginx/sites-enabled/
 sudo systemctl reload nginx
 ```
 

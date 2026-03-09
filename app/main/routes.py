@@ -23,7 +23,7 @@ def serialize_vehicle_map(scooter: Vehicle) -> dict:
 
 @main_bp.route('/')
 def index():
-    scooters = Vehicle.query.order_by(Vehicle.id.asc()).limit(8).all()
+    scooters = Vehicle.query.order_by(Vehicle.id.asc()).all()
     return render_template('main/index.html', scooters=scooters, map_scooters=[serialize_vehicle_map(s) for s in scooters])
 
 
