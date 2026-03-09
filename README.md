@@ -5,9 +5,9 @@ Webplattform für den Verleih von E-Fahrzeugen in Bern. Entwickelt als Lernproje
 ## Funktionen
 
 - Benutzerkonten mit den Rollen **Anbieter** (Provider) und **Fahrgast** (Rider)
-- E-Fahrzeuge-Verwaltung: Standort, Akkustand, Status
+- E-Fahrzeuge-Verwaltung: Standort, Akkustand, Status, Fahrzeugtyp (E-Scooter, E-Bike, E-Cargo)
 - Ausleihe und Rückgabe mit automatischer Preisberechnung
-- Interaktive Kartenansicht (Leaflet.js) mit allen verfügbaren Rollern in Bern
+- Interaktive Kartenansicht (Leaflet.js) mit allen 20 Fahrzeugen in Bern
 - RESTful API mit Token-Authentifizierung
 - Deployment via Docker Compose oder Gunicorn/Nginx auf Linux
 
@@ -46,7 +46,7 @@ db/
 deploy/                # Deployment-Skripte und Konfiguration
 docs/                  # Architektur, API, Testprotokoll, Handbuch
 tests/
-  test_app.py          # 12 automatisierte pytest-Tests
+  test_app.py          # 13 automatisierte pytest-Tests
 ```
 
 ## Datenmodell
@@ -94,6 +94,31 @@ erDiagram
     }
 ```
 
+## Demo-Flotte (20 Fahrzeuge in Bern)
+
+| Kennung | Standort | Typ | Status |
+|---------|----------|-----|--------|
+| BE-3001 | Bahnhof Bern | 🛴 E-Scooter | Verfügbar |
+| BE-3002 | Bundesplatz | 🛴 E-Scooter | Verfügbar |
+| BE-3003 | Zytglogge | 🚲 E-Bike | Verfügbar |
+| BE-3004 | Bärengraben | 🚲 E-Bike | Verfügbar |
+| BE-3005 | Rosengarten | 🚐 E-Cargo | Verfügbar |
+| BE-3006 | Marzili | 🛴 E-Scooter | Verfügbar |
+| BE-3007 | Kornhausplatz | 🛴 E-Scooter | Verfügbar |
+| BE-3008 | Münster | 🚲 E-Bike | Verfügbar |
+| BE-3009 | Helvetiaplatz | 🛴 E-Scooter | Verfügbar |
+| BE-3010 | Waisenhausplatz | 🚐 E-Cargo | Verfügbar |
+| BE-3011 | Breitenrain | 🛴 E-Scooter | Verfügbar |
+| BE-3012 | Länggasse | 🚲 E-Bike | Verfügbar |
+| BE-3013 | Bremgartenwald | 🚐 E-Cargo | ⚙️ Wartung |
+| BE-3014 | Burgernziel | 🛴 E-Scooter | Verfügbar |
+| BE-3015 | Viktoriapark | 🚲 E-Bike | Verfügbar |
+| BE-3016 | Köniz Dorf | 🛴 E-Scooter | Verfügbar |
+| BE-3017 | Ostermundigen Zentrum | 🚲 E-Bike | Verfügbar |
+| BE-3018 | Bümpliz Bahnhof | 🛴 E-Scooter | ⚙️ Wartung |
+| BE-3019 | Weissenbühl | 🚐 E-Cargo | Verfügbar |
+| BE-3020 | Universität Bern | 🚲 E-Bike | Verfügbar |
+
 ## Umgebungsvariablen
 
 Datei `.env` im Projektwurzelverzeichnis anlegen (Vorlage: `.env.example`):
@@ -122,6 +147,11 @@ docker compose up --build -d
 Anwendung erreichbar unter `http://localhost:8000`.
 
 Beim ersten Start wird die Datenbank automatisch initialisiert und mit Demo-Daten befüllt.
+
+> **Hinweis:** Falls die Datenbank bereits mit anderen Zugangsdaten existiert, Volume zuerst löschen:
+> ```bash
+> docker compose down -v && docker compose up --build -d
+> ```
 
 ## Lokaler Start ohne Docker
 
@@ -196,7 +226,7 @@ curl -X POST http://YOUR_HOST/api/token \
 | POST | `/api/rentals/start/<vehicle_id>` | Rider | Ausleihe starten |
 | POST | `/api/rentals/end/<rental_id>` | Rider | Ausleihe beenden |
 
-Vollständige API-Dokumentation: [docs/api.md](docs/api.md)
+Vollständige API-Dokumentation: [docs/04_api_dokumentation.md](docs/04_api_dokumentation.md)
 
 ## Tests
 
@@ -206,7 +236,7 @@ pytest
 
 Die 13 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Fahrzeug-Anlage, Ausleihe, Rückgabe sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
 
-Vollständiges Testprotokoll: [docs/test_protocol.md](docs/test_protocol.md)
+Vollständiges Testprotokoll: [docs/06_testprotokoll.md](docs/06_testprotokoll.md)
 
 ## Datenbankdateien
 
@@ -217,10 +247,13 @@ Vollständiges Testprotokoll: [docs/test_protocol.md](docs/test_protocol.md)
 | `db/schema/schema.sql` | Relationales Datenbankschema (DDL) |
 | `db/schema/schema.md` | Beschreibung Tabellen, Schlüssel und Beziehungen |
 
-## Weiterführende Dokumentation
+## Dokumentation
 
-- [docs/architecture.md](docs/architecture.md) — Architekturentscheid, Schichtenmodell, Sequenzdiagramme
-- [docs/api.md](docs/api.md) — Vollständige REST-API-Referenz mit Beispielen
-- [docs/user_manual.md](docs/user_manual.md) — Benutzerhandbuch für Rider und Provider
-- [docs/test_protocol.md](docs/test_protocol.md) — Testprotokoll mit allen 12 Testfällen
-- [docs/management_summary.md](docs/management_summary.md) — Management Summary
+| Dokument | Inhalt |
+|----------|--------|
+| [docs/01_management_summary.md](docs/01_management_summary.md) | Management Summary |
+| [docs/02_anforderungen.md](docs/02_anforderungen.md) | Funktionale und nicht-funktionale Anforderungen |
+| [docs/03_benutzerhandbuch.md](docs/03_benutzerhandbuch.md) | Benutzerhandbuch für Rider und Provider |
+| [docs/04_api_dokumentation.md](docs/04_api_dokumentation.md) | Vollständige REST-API-Referenz mit Beispielen |
+| [docs/05_systemarchitektur.md](docs/05_systemarchitektur.md) | Architekturentscheid, Schichtenmodell, ERD |
+| [docs/06_testprotokoll.md](docs/06_testprotokoll.md) | Testprotokoll mit allen 13 Testfällen |
