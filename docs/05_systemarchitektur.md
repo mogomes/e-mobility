@@ -18,6 +18,7 @@ Die Geschäftslogik (Ausleihe starten/beenden, Preisberechnung, Validierungen) i
 |---|---|---|
 | `main` | `/` | Startseite, Dashboard |
 | `auth` | `/auth` | Registrierung, Login, Logout |
+| `profile` | `/profile` | Nutzerprofil: Zahlungsmittel, E-Mail, Passwort, Fahrthistorie |
 | `providers` | `/providers` | Fahrzeugverwaltung für Anbieter |
 | `rentals` | `/rentals` | Start und Ende von Ausleihen (Web) |
 | `api` | `/api` | RESTful API-Endpunkte |
@@ -148,12 +149,15 @@ flowchart TD
     C -- Fehler --> D[ValueError 400 / Flash]
     C -- OK --> E[end_time = jetzt]
     E --> F[Fahrtdauer berechnen]
-    F --> G["Preis: 1.50 + 0.35 x Minuten"]
-    G --> H["Distanz: end_km - start_km"]
-    H --> I[Fahrzeug-Standort aktualisieren]
+    F --> G["Preis: 1.50 + 0.35 × Minuten"]
+    G --> H["Distanz: end_km − start_km"]
+    H --> H2["Akkuabbau: −2% × km (min. 0%)"]
+    H2 --> I[Fahrzeug: Standort + Akku aktualisieren]
     I --> J[Rental.status = completed]
     J --> K[Antwort an Client]
 ```
+
+> Die gleiche Logik ist als PostgreSQL Stored Procedure `sp_end_rental` in `db/stored_procedures.sql` hinterlegt und wird bei App-Start automatisch angelegt.
 
 ---
 

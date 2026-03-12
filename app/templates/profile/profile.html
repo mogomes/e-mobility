@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Profil{% endblock %}
+{% block content %}
+
+<section class="dashboard-hero">
+  <div class="hero-copy">
+    <span class="eyebrow">Mein Konto</span>
+    <h1>{{ current_user.username }}</h1>
+    <p>Angemeldet als <strong>{{ role_label(current_user.role) }}</strong> · <em>{{ current_user.email }}</em></p>
+  </div>
+</section>
+
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+
+  <!-- Zahlungsmittel ändern -->
+  <section class="card form-card">
+    <h2 style="font-size:1.1rem; margin-bottom:1rem;">Zahlungsmittel</h2>
+    <p style="margin-bottom:.75rem;">Aktuell: <strong>{{ current_user.payment_method or '—' }}</strong></p>
+    <form method="post" action="{{ url_for('profile.update_payment') }}">
+      <label>Neues Zahlungsmittel
+        <input type="text" name="payment_method"
+               value="{{ current_user.payment_method or '' }}"
+               placeholder="z. B. Visa **** 4242">
+      </label>
+      <button type="submit">Speichern</button>
+    </form>
+  </section>
+
+  <!-- E-Mail ändern -->
+  <section class="card form-card">
+    <h2 style="font-size:1.1rem; margin-bottom:1rem;">E-Mail-Adresse ändern</h2>
+    <form method="post" action="{{ url_for('profile.update_email') }}">
+      <label>Neue E-Mail-Adresse
+        <input type="email" name="email"
+               value="{{ current_user.email }}" required>
+      </label>
+      <button type="submit">Speichern</button>
+    </form>
+  </section>
+
+  <!-- Passwort ändern -->
+  <section class="card form-card">
+    <h2 style="font-size:1.1rem; margin-bottom:1rem;">Passwort ändern</h2>
+    <form method="post" action="{{ url_for('profile.update_password') }}">
+      <label>Aktuelles Passwort
+        <input type="password" name="current_password" required>
+      </label>
+      <label>Neues Passwort
+        <input type="password" name="new_password" required minlength="8">
+      </label>
+      <label>Neues Passwort bestätigen
+        <input type="password" name="confirm_password" required minlength="8">
+      </label>
+      <button type="submit">Passwort ändern</button>
+    </form>
+  </section>
+
+</div>
+
+<!-- Fahrthistorie -->
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Fahrthistorie von {{ current_user.username }}</span>
+    <h2>Alle meine Fahrten</h2>
+  </div>
+</section>
+
+<div class="grid card-grid">
+  {% for rental in rentals %}
+    <article class="card rental-card">
+      <div class="card-top">
+        <span class="status-badge {{ rental.status }}">{{ status_label(rental.status) }}</span>
+      </div>
+      <h3>{{ rental.vehicle.name }}</h3>
+      <p><strong>Ausleihe Nr.:</strong> {{ rental.id }}</p>
+      <p><strong>Fahrzeug:</strong> {{ rental.vehicle.public_id }}</p>
+      <p><strong>Beginn:</strong> {{ rental.start_time.strftime('%d.%m.%Y %H:%M') if rental.start_time else '—' }}</p>
+      <p><strong>Ende:</strong> {{ rental.end_time.strftime('%d.%m.%Y %H:%M') if rental.end_time else '—' }}</p>
+      <p><strong>Strecke:</strong>
+        {% if rental.distance_km is not none %}
+          {{ '%.2f'|format(rental.distance_km|float) }} km
+        {% else %}—{% endif %}
+      </p>
+      <p><strong>Preis:</strong>
+        {% if rental.total_price %}
+          CHF {{ '%.2f'|format(rental.total_price|float) }}
+        {% else %}—{% endif %}
+      </p>
+    </article>
+  {% else %}
+    <article class="card empty-card">
+      <h3>Noch keine Fahrten</h3>
+      <p>Sobald du eine Fahrt abschliesst, erscheint sie hier.</p>
+    </article>
+  {% endfor %}
+</div>
+
+{% endblock %}

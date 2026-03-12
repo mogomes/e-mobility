@@ -336,6 +336,10 @@ def end_rental(rental: Rental, end_km: float, latitude: float, longitude: float)
     rental.total_price = rental.calculate_total_price()
     rental.distance_km = rental.calculate_distance()
 
+    # Akkustand um 2 % pro gefahrenen km senken
+    battery_drain = min(int(rental.distance_km * 2), rental.vehicle.battery_level)
+    rental.vehicle.battery_level = max(0, rental.vehicle.battery_level - battery_drain)
+
     rental.vehicle.latitude = latitude
     rental.vehicle.longitude = longitude
     rental.vehicle.status = VehicleStatus.AVAILABLE.value

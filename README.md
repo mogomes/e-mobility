@@ -6,9 +6,12 @@ Webplattform für den Verleih von E-Fahrzeugen in Bern. Entwickelt als Lernproje
 
 - Benutzerkonten mit den Rollen **Anbieter** (Provider) und **Fahrgast** (Rider)
 - E-Fahrzeuge-Verwaltung: Standort, Akkustand, Status, Fahrzeugtyp (E-Scooter, E-Bike, E-Cargo)
-- Ausleihe und Rückgabe mit automatischer Preisberechnung
+- Ausleihe und Rückgabe mit automatischer Preisberechnung; **Akkuabbau −2 % pro km**
+- Fahrgast-Profil: Zahlungsmittel, E-Mail und Passwort ändern, vollständige Fahrthistorie
+- Anbieter-Name wird pro Fahrzeug auf Start- und Dashboardseite angezeigt
 - Interaktive Kartenansicht (Leaflet.js) mit allen 20 Fahrzeugen in Bern
-- RESTful API mit Token-Authentifizierung
+- RESTful API mit Token-Authentifizierung und `POST /api/register` (inkl. Duplikat-Fehlercodes)
+- PostgreSQL **Stored Procedures** `sp_start_rental` / `sp_end_rental` (werden automatisch angelegt)
 - Deployment via Docker Compose oder Gunicorn/Nginx auf Linux
 
 ## Technologie-Stack
@@ -27,14 +30,15 @@ Webplattform für den Verleih von E-Fahrzeugen in Bern. Entwickelt als Lernproje
 
 ```text
 app/
-  __init__.py          # App-Factory (create_app)
+  __init__.py          # App-Factory (create_app, Stored-Procedure-Setup)
   models.py            # User, Vehicle, Rental + Enums
   services.py          # Geschäftslogik: start_rental, end_rental, seed_demo_data
   extensions.py        # db, migrate, login_manager
   presentation.py      # Jinja-Helpers: status_label, role_label
-  api/                 # Blueprint: REST-Endpunkte, Token-Auth
+  api/                 # Blueprint: REST-Endpunkte, Token-Auth, /api/register
   auth/                # Blueprint: Registrierung, Login, Logout
   main/                # Blueprint: Startseite, Dashboard
+  profile/             # Blueprint: Nutzerprofil (Zahlungsmittel, E-Mail, Passwort)
   providers/           # Blueprint: Fahrzeug-Flottenverwaltung
   rentals/             # Blueprint: Ausleihe und Rückgabe
   static/              # CSS, JS, SVG-Assets
@@ -43,10 +47,11 @@ db/
   conf/                # postgresql.conf
   init/                # 01-init.sql (Bootstrap für leere DB)
   schema/              # schema.sql, schema.md
+  stored_procedures.sql  # sp_start_rental, sp_end_rental (PostgreSQL)
 deploy/                # Deployment-Skripte und Konfiguration
 docs/                  # Architektur, API, Testprotokoll, Handbuch
 tests/
-  test_app.py          # 13 automatisierte pytest-Tests
+  test_app.py          # 27 automatisierte pytest-Tests
 ```
 
 ## Datenmodell

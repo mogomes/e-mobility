@@ -21,6 +21,47 @@ Authorization: Bearer <token>
 
 ## Endpunkte
 
+### POST /api/register
+
+Neuen Benutzer registrieren. Gibt bei Konflikten einen strukturierten Fehler zurück. Kein Token erforderlich.
+
+**Request:**
+```bash
+curl -X POST http://YOUR_HOST/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"username": "newrider", "email": "new@example.com", "password": "Secret123!", "role": "rider"}'
+```
+
+| Feld | Typ | Pflicht | Beschreibung |
+|---|---|---|---|
+| `username` | `string` | ✅ | Eindeutiger Benutzername |
+| `email` | `string` | ✅ | Eindeutige E-Mail-Adresse |
+| `password` | `string` | ✅ | Passwort (wird gehasht gespeichert) |
+| `role` | `string` | – | `rider` (Standard) oder `provider` |
+| `payment_method` | `string` | – | Zahlungsmittel für Fahrgäste |
+
+**Erfolg (201 Created):**
+```json
+{
+  "message": "Registrierung erfolgreich.",
+  "token": "a3f9c2e1b7d4...",
+  "role": "rider"
+}
+```
+
+**Fehler (400 Bad Request):**
+```json
+{ "error": "missing_fields", "message": "username, email und password sind Pflichtfelder." }
+```
+
+**Fehler (409 Conflict):**
+```json
+{ "error": "username_taken", "message": "Benutzername bereits vergeben." }
+{ "error": "email_taken",    "message": "E-Mail-Adresse bereits vergeben." }
+```
+
+---
+
 ### POST /api/token
 
 Token für den API-Zugriff beziehen. Kein Bearer-Token erforderlich.
@@ -212,7 +253,7 @@ curl -X POST http://YOUR_HOST/api/rentals/start/1 \
 
 ### POST /api/rentals/end/\<rental\_id\> 🔒
 
-Aktive Ausleihe beenden und Preis berechnen. Nur der Fahrgast, der die Ausleihe gestartet hat, kann sie beenden.
+Aktive Ausleihe beenden, Preis berechnen und Akkustand des Fahrzeugs reduzieren (**−2 % pro km**). Nur der Fahrgast, der die Ausleihe gestartet hat, kann sie beenden.
 
 **Request:**
 ```bash
@@ -261,10 +302,11 @@ curl -X POST http://YOUR_HOST/api/rentals/end/5 \
 
 | Methode | Endpunkt | Auth | Beschreibung |
 |---|---|---|---|
+| POST | `/api/register` | – | Neuen Benutzer registrieren |
 | POST | `/api/token` | – | Token beziehen |
-| GET | `/api/vehicles` | – | Alle Fahrzeuge |
-| GET | `/api/vehicles/<id>` | – | Fahrzeug-Details |
+| GET | `/api/vehicles` | – | Alle Fahrzeuge inkl. Anbieter |
+| GET | `/api/vehicles/<id>` | – | Fahrzeug-Details inkl. Anbieter |
 | GET | `/api/provider/vehicles` | 🔒 Provider | Eigene Flotte |
 | GET | `/api/rentals` | 🔒 | Eigene Ausleihen |
 | POST | `/api/rentals/start/<id>` | 🔒 Rider | Ausleihe starten |
-| POST | `/api/rentals/end/<id>` | 🔒 Rider | Ausleihe beenden |
+| POST | `/api/rentals/end/<id>` | 🔒 Rider | Ausleihe beenden (inkl. Akkuabbau) |

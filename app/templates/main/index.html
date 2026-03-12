@@ -84,6 +84,7 @@
       <p class="vehicle-type-label">{{ vehicle_type_label(scooter.vehicle_type) }}</p>
       <h3>{{ scooter.name }}</h3>
       <p><strong>Kennung:</strong> {{ scooter.public_id }}</p>
+      <p><strong>Anbieter:</strong> {{ scooter.provider.username }}</p>
     </article>
   {% else %}
     <article class="card empty-card">

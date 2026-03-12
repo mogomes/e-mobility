@@ -25,6 +25,9 @@
               {% if current_user.role == 'provider' %}
               <a href="{{ url_for('providers.vehicles') }}">E-Fahrzeuge</a>
               {% endif %}
+              {% if current_user.role == 'rider' %}
+              <a href="{{ url_for('profile.profile') }}">Profil</a>
+              {% endif %}
               <a href="{{ url_for('auth.logout') }}" class="nav-pill">Abmelden</a>
             {% else %}
               <a href="{{ url_for('auth.login') }}">Anmelden</a>

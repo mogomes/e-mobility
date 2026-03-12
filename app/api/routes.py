@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from ..extensions import db
-from ..models import Rental, Vehicle, User
+from ..models import Rental, Vehicle, User, UserRole
 from ..services import end_rental, start_rental
 
 
@@ -41,6 +41,35 @@ def api_user_from_request():
         token = auth_header.removeprefix('Bearer ').strip()
         return User.query.filter_by(api_token=token).first()
     return None
+
+
+@api_bp.route('/register', methods=['POST'])
+def api_register():
+    """Registriert einen neuen Benutzer. Gibt 409 zurück wenn Benutzername oder E-Mail bereits vergeben sind."""
+    data = request.get_json(silent=True) or {}
+    username = data.get('username', '').strip()
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '')
+    role = data.get('role', UserRole.RIDER.value)
+    payment_method = data.get('payment_method', '') or None
+
+    if not username or not email or not password:
+        return jsonify({'error': 'missing_fields', 'message': 'username, email und password sind Pflichtfelder.'}), 400
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'error': 'username_taken', 'message': 'Benutzername bereits vergeben.'}), 409
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({'error': 'email_taken', 'message': 'E-Mail-Adresse bereits vergeben.'}), 409
+
+    if role not in {UserRole.RIDER.value, UserRole.PROVIDER.value}:
+        role = UserRole.RIDER.value
+
+    user = User(username=username, email=email, role=role, payment_method=payment_method)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'message': 'Registrierung erfolgreich.', 'token': user.api_token, 'role': user.role}), 201
 
 
 @api_bp.route('/token', methods=['POST'])

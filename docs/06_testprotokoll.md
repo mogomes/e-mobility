@@ -20,14 +20,28 @@ pytest tests/ -v
 | T-03 | `test_register_user` | Neuen Fahrgast registrieren | HTTP 200, Flash «Registrierung erfolgreich» | ✅ Bestanden |
 | T-04 | `test_login_works` | Login mit korrekten Zugangsdaten | HTTP 200, Dashboard erscheint («Übersicht») | ✅ Bestanden |
 | T-05 | `test_login_fails_with_wrong_password` | Login mit falschem Passwort | Flash «Ungültige Zugangsdaten», kein Redirect auf Dashboard | ✅ Bestanden |
-| T-06 | `test_provider_can_create_scooter` | Anbieter legt neues Fahrzeug an (inkl. `vehicle_type`) | HTTP 200, Fahrzeug `SC-9999` in Datenbank vorhanden | ✅ Bestanden |
-| T-07 | `test_rider_can_start_and_end_rental` | Fahrgast startet und beendet Ausleihe mit korrektem QR-Code | Rental `active` → `completed`, `total_price > 0` | ✅ Bestanden |
-| T-08 | `test_rental_rejected_with_wrong_unlock_code` | Ausleihe mit falschem Entriegelungscode | Kein Rental angelegt (`active count == 0`) | ✅ Bestanden |
-| T-09 | `test_api_token_and_vehicle_list` | API-Token beziehen, Fahrzeugliste und Rentals abrufen | Token als JSON, Fahrzeug-/Rental-Liste als Array | ✅ Bestanden |
-| T-10 | `test_api_vehicle_detail` | Detail-Endpunkt `GET /api/vehicles/<id>` | HTTP 200, Felder `public_id` und `battery_level` vorhanden | ✅ Bestanden |
-| T-11 | `test_api_rentals_requires_auth` | `GET /api/rentals` ohne Token | HTTP 401, `error: missing_or_invalid_token` | ✅ Bestanden |
-| T-12 | `test_api_invalid_token_rejected` | `GET /api/rentals` mit ungültigem Bearer-Token | HTTP 401 | ✅ Bestanden |
-| T-13 | `test_unique_registration_constraints` | Doppelten Benutzernamen registrieren | HTTP 200, Flash-Fehlermeldung; nur 1 User in DB | ✅ Bestanden |
+| T-06 | `test_password_is_hashed_in_db` | Passwort-Hash prüfen | `password_hash` ≠ Klartext, beginnt mit `scrypt:` oder `pbkdf2:` | ✅ Bestanden |
+| T-07 | `test_unique_registration_constraints` | Doppelten Benutzernamen registrieren | HTTP 200, Flash-Fehlermeldung; nur 1 User in DB | ✅ Bestanden |
+| T-08 | `test_api_register_success` | `POST /api/register` erfolgreich | HTTP 201, `token` im JSON enthalten | ✅ Bestanden |
+| T-09 | `test_api_register_duplicate_username` | `POST /api/register` mit bereits vergebenem Benutzernamen | HTTP 409, `error: username_taken` | ✅ Bestanden |
+| T-10 | `test_api_register_duplicate_email` | `POST /api/register` mit bereits vergebener E-Mail | HTTP 409, `error: email_taken` | ✅ Bestanden |
+| T-11 | `test_api_register_missing_fields` | `POST /api/register` ohne Pflichtfelder | HTTP 400, `error: missing_fields` | ✅ Bestanden |
+| T-12 | `test_provider_can_create_scooter` | Anbieter legt neues Fahrzeug an (inkl. `vehicle_type`) | HTTP 200, Fahrzeug `SC-9999` in Datenbank vorhanden | ✅ Bestanden |
+| T-13 | `test_rider_can_start_and_end_rental` | Fahrgast startet und beendet Ausleihe mit korrektem QR-Code | Rental `active` → `completed`, `total_price > 0` | ✅ Bestanden |
+| T-14 | `test_battery_drains_after_rental` | Akkustand sinkt nach 5 km Fahrt um 10 % | `battery_level` = Startwert − 10 (min. 0) | ✅ Bestanden |
+| T-15 | `test_rental_rejected_with_wrong_unlock_code` | Ausleihe mit falschem Entriegelungscode | Kein Rental angelegt (`active count == 0`) | ✅ Bestanden |
+| T-16 | `test_profile_page_loads` | Profil-Seite für Fahrgast abrufbar | HTTP 200, Benutzername sichtbar | ✅ Bestanden |
+| T-17 | `test_profile_update_payment` | Zahlungsmittel im Profil ändern | HTTP 200, neues Zahlungsmittel in DB gespeichert | ✅ Bestanden |
+| T-18 | `test_profile_update_email` | E-Mail-Adresse im Profil ändern | HTTP 200, neue E-Mail in DB gespeichert | ✅ Bestanden |
+| T-19 | `test_profile_update_email_duplicate_rejected` | Änderung auf bereits vergbene E-Mail | Flash «bereits vergeben» | ✅ Bestanden |
+| T-20 | `test_profile_update_password` | Passwort im Profil ändern | HTTP 200, neues Passwort gültig | ✅ Bestanden |
+| T-21 | `test_profile_update_password_wrong_current` | Passwortänderung mit falschem aktuellen Passwort | Flash «Aktuelles Passwort ist falsch» | ✅ Bestanden |
+| T-22 | `test_profile_update_password_mismatch` | Neue Passwörter stimmen nicht überein | Flash «stimmen nicht überein» | ✅ Bestanden |
+| T-23 | `test_api_token_and_vehicle_list` | API-Token beziehen, Fahrzeugliste und Rentals abrufen | Token als JSON, Fahrzeug-/Rental-Liste als Array | ✅ Bestanden |
+| T-24 | `test_api_vehicle_detail` | Detail-Endpunkt `GET /api/vehicles/<id>` inkl. Anbieter | HTTP 200, Felder `public_id`, `battery_level`, `provider` vorhanden | ✅ Bestanden |
+| T-25 | `test_api_rentals_requires_auth` | `GET /api/rentals` ohne Token | HTTP 401, `error: missing_or_invalid_token` | ✅ Bestanden |
+| T-26 | `test_api_invalid_token_rejected` | `GET /api/rentals` mit ungültigem Bearer-Token | HTTP 401 | ✅ Bestanden |
+| T-27 | `test_api_invalid_credentials_rejected` | `POST /api/token` mit falschem Passwort | HTTP 401, `error: invalid_credentials` | ✅ Bestanden |
 
 ---
 
