@@ -4,7 +4,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..models import Vehicle, VehicleStatus, UserRole, VehicleType
+from ..models import User, Vehicle, VehicleStatus, UserRole, VehicleType
 
 
 providers_bp = Blueprint('providers', __name__)
@@ -78,3 +78,55 @@ def delete_vehicle(vehicle_id):
     db.session.commit()
     flash('Fahrzeug wurde gelöscht.', 'info')
     return redirect(url_for('providers.vehicles'))
+
+
+@providers_bp.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    ensure_provider()
+    return render_template('providers/profile.html')
+
+
+@providers_bp.route('/profile/username', methods=['POST'])
+@login_required
+def update_username():
+    ensure_provider()
+    username = request.form.get('username', '').strip()
+    if not username:
+        flash('Benutzername darf nicht leer sein.', 'danger')
+        return redirect(url_for('providers.profile'))
+    if len(username) < 3:
+        flash('Benutzername muss mindestens 3 Zeichen lang sein.', 'danger')
+        return redirect(url_for('providers.profile'))
+    existing = User.query.filter(User.username == username, User.id != current_user.id).first()
+    if existing:
+        flash('Dieser Benutzername ist bereits vergeben.', 'danger')
+        return redirect(url_for('providers.profile'))
+    current_user.username = username
+    db.session.commit()
+    flash('Benutzername erfolgreich geändert.', 'success')
+    return redirect(url_for('providers.profile'))
+
+
+@providers_bp.route('/profile/password', methods=['POST'])
+@login_required
+def update_password():
+    ensure_provider()
+    current_pw = request.form.get('current_password', '')
+    new_pw = request.form.get('new_password', '')
+    confirm_pw = request.form.get('confirm_password', '')
+
+    if not current_user.check_password(current_pw):
+        flash('Aktuelles Passwort ist falsch.', 'danger')
+        return redirect(url_for('providers.profile'))
+    if len(new_pw) < 8:
+        flash('Das neue Passwort muss mindestens 8 Zeichen lang sein.', 'danger')
+        return redirect(url_for('providers.profile'))
+    if new_pw != confirm_pw:
+        flash('Die neuen Passwörter stimmen nicht überein.', 'danger')
+        return redirect(url_for('providers.profile'))
+
+    current_user.set_password(new_pw)
+    db.session.commit()
+    flash('Passwort erfolgreich geändert.', 'success')
+    return redirect(url_for('providers.profile'))

@@ -7,7 +7,9 @@ Webplattform für den Verleih von E-Fahrzeugen in Bern. Entwickelt als Lernproje
 - Benutzerkonten mit den Rollen **Anbieter** (Provider) und **Fahrgast** (Rider)
 - E-Fahrzeuge-Verwaltung: Standort, Akkustand, Status, Fahrzeugtyp (E-Scooter, E-Bike, E-Cargo)
 - Ausleihe und Rückgabe mit automatischer Preisberechnung; **Akkuabbau −2 % pro km**
+- **Akkugrenze:** Rückgabe mit unmöglicher Distanz (mehr Akku nötig als vorhanden) wird verweigert
 - Fahrgast-Profil: Zahlungsmittel, E-Mail und Passwort ändern, vollständige Fahrthistorie
+- **Anbieter-Profil:** Benutzername und Passwort änderbar
 - Anbieter-Name wird pro Fahrzeug auf Start- und Dashboardseite angezeigt
 - Interaktive Kartenansicht (Leaflet.js) mit allen 20 Fahrzeugen in Bern
 - RESTful API mit Token-Authentifizierung und `POST /api/register` (inkl. Duplikat-Fehlercodes)
@@ -38,8 +40,8 @@ app/
   api/                 # Blueprint: REST-Endpunkte, Token-Auth, /api/register
   auth/                # Blueprint: Registrierung, Login, Logout
   main/                # Blueprint: Startseite, Dashboard
-  profile/             # Blueprint: Nutzerprofil (Zahlungsmittel, E-Mail, Passwort)
-  providers/           # Blueprint: Fahrzeug-Flottenverwaltung
+  profile/             # Blueprint: Nutzerprofil Fahrgast (Zahlungsmittel, E-Mail, Passwort)
+  providers/           # Blueprint: Fahrzeug-Flottenverwaltung + Anbieter-Profil
   rentals/             # Blueprint: Ausleihe und Rückgabe
   static/              # CSS, JS, SVG-Assets
   templates/           # Jinja2-Templates
@@ -51,7 +53,7 @@ db/
 deploy/                # Deployment-Skripte und Konfiguration
 docs/                  # Architektur, API, Testprotokoll, Handbuch
 tests/
-  test_app.py          # 28 automatisierte pytest-Tests
+  test_app.py          # 33 automatisierte pytest-Tests
 ```
 
 ## Datenmodell
@@ -239,7 +241,7 @@ Vollständige API-Dokumentation: [docs/04_api_dokumentation.md](docs/04_api_doku
 pytest
 ```
 
-Die 13 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Fahrzeug-Anlage, Ausleihe, Rückgabe sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
+Die 33 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Fahrzeug-Anlage, Ausleihe, Rückgabe, Akkugrenze, Anbieter-Profil sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
 
 Vollständiges Testprotokoll: [docs/06_testprotokoll.md](docs/06_testprotokoll.md)
 
@@ -261,4 +263,4 @@ Vollständiges Testprotokoll: [docs/06_testprotokoll.md](docs/06_testprotokoll.m
 | [docs/03_benutzerhandbuch.md](docs/03_benutzerhandbuch.md) | Benutzerhandbuch für Rider und Provider |
 | [docs/04_api_dokumentation.md](docs/04_api_dokumentation.md) | Vollständige REST-API-Referenz mit Beispielen |
 | [docs/05_systemarchitektur.md](docs/05_systemarchitektur.md) | Architekturentscheid, Schichtenmodell, ERD |
-| [docs/06_testprotokoll.md](docs/06_testprotokoll.md) | Testprotokoll mit allen 13 Testfällen |
+| [docs/06_testprotokoll.md](docs/06_testprotokoll.md) | Testprotokoll mit allen 33 Testfällen |

@@ -328,6 +328,13 @@ def end_rental(rental: Rental, end_km: float, latitude: float, longitude: float)
         raise ValueError('Ausleihe ist bereits beendet.')
     if end_km < float(rental.start_km):
         raise ValueError('Der Endkilometerstand darf nicht kleiner als der Startkilometerstand sein.')
+    distance = end_km - float(rental.start_km)
+    required_battery = int(distance * 2)
+    if required_battery > rental.vehicle.battery_level:
+        raise ValueError(
+            f'Fahrt nicht möglich: {distance:.1f} km würden {required_battery} % Akku benötigen, '
+            f'aber das Fahrzeug hat nur {rental.vehicle.battery_level} % geladen.'
+        )
     if not (-90 <= latitude <= 90):
         raise ValueError('Ungültiger Breitengrad.')
     if not (-180 <= longitude <= 180):

@@ -111,6 +111,8 @@ Beispiel: 20 Minuten → CHF 1.50 + CHF 7.00 = **CHF 8.50**
 
 > **Akkuabbau:** Nach jeder Fahrt sinkt der Akkustand des Fahrzeugs automatisch um **2 % pro gefahrenen km**. Bei 5 km Fahrt = −10 %. Fahrzeuge mit weniger als 10 % Akkustand können nicht mehr ausgeliehen werden.
 
+> **Akkugrenze:** Die angegebene Distanz darf den verbleibenden Akkustand nicht überschreiten. Beispiel: Hat das Fahrzeug 40 % Akku, können maximal 20 km angegeben werden (20 km × 2 % = 40 %). Eine unmögliche Distanz wird mit einer Fehlermeldung abgewiesen.
+
 ---
 
 ## 6. Profil und Einstellungen (Fahrgast)
@@ -159,7 +161,25 @@ Jedes Fahrzeug in der Flottenliste hat ein eingebettetes Bearbeitungsformular in
 
 ---
 
-## 8. API-Zugriff ohne Browser (curl / Postman)
+## 8. Profil und Einstellungen (Anbieter)
+
+Die Anbieter-Profilseite ist unter `http://YOUR_HOST/providers/profile` erreichbar (Link «Profil» in der Navigation).
+
+### Benutzername ändern
+
+1. Neuen Benutzernamen eingeben (mindestens 3 Zeichen).
+2. «Speichern» klicken.
+3. Der neue Benutzername muss eindeutig sein — ein bereits vergebener Name wird abgewiesen.
+
+### Passwort ändern
+
+1. Aktuelles Passwort eingeben (als Verifikation).
+2. Neues Passwort und Bestätigung eingeben (mindestens 8 Zeichen).
+3. «Passwort ändern» klicken.
+
+---
+
+## 9. API-Zugriff ohne Browser (curl / Postman)
 
 Die API ist vollständig ohne Browser nutzbar. Alle Daten — insbesondere die Fahrzeugflotte — lassen sich direkt per `curl`, HTTPie oder Postman abrufen und verwalten.
 

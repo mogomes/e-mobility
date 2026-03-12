@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Anbieter-Profil{% endblock %}
+{% block content %}
+
+<section class="dashboard-hero">
+  <div class="hero-copy">
+    <span class="eyebrow">Mein Konto</span>
+    <h1>{{ current_user.username }}</h1>
+    <p>Angemeldet als <strong>{{ role_label(current_user.role) }}</strong> · <em>{{ current_user.email }}</em></p>
+  </div>
+</section>
+
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+
+  <!-- Benutzername ändern -->
+  <section class="card form-card">
+    <h2 style="font-size:1.1rem; margin-bottom:1rem;">Benutzername ändern</h2>
+    <form method="post" action="{{ url_for('providers.update_username') }}">
+      <label>Neuer Benutzername
+        <input type="text" name="username"
+               value="{{ current_user.username }}"
+               minlength="3" required>
+      </label>
+      <button type="submit">Speichern</button>
+    </form>
+  </section>
+
+  <!-- Passwort ändern -->
+  <section class="card form-card">
+    <h2 style="font-size:1.1rem; margin-bottom:1rem;">Passwort ändern</h2>
+    <form method="post" action="{{ url_for('providers.update_password') }}">
+      <label>Aktuelles Passwort
+        <input type="password" name="current_password" required>
+      </label>
+      <label>Neues Passwort
+        <input type="password" name="new_password" required minlength="8">
+      </label>
+      <label>Neues Passwort bestätigen
+        <input type="password" name="confirm_password" required minlength="8">
+      </label>
+      <button type="submit">Passwort ändern</button>
+    </form>
+  </section>
+
+</div>
+
+{% endblock %}

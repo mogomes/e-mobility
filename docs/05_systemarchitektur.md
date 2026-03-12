@@ -18,8 +18,8 @@ Die Geschäftslogik (Ausleihe starten/beenden, Preisberechnung, Validierungen) i
 |---|---|---|
 | `main` | `/` | Startseite, Dashboard |
 | `auth` | `/auth` | Registrierung, Login, Logout |
-| `profile` | `/profile` | Nutzerprofil: Zahlungsmittel, E-Mail, Passwort, Fahrthistorie |
-| `providers` | `/providers` | Fahrzeugverwaltung für Anbieter |
+| `profile` | `/profile` | Nutzerprofil (Fahrgast): Zahlungsmittel, E-Mail, Passwort, Fahrthistorie |
+| `providers` | `/providers` | Fahrzeugverwaltung + Anbieter-Profil (Benutzername, Passwort) |
 | `rentals` | `/rentals` | Start und Ende von Ausleihen (Web) |
 | `api` | `/api` | RESTful API-Endpunkte |
 
@@ -147,7 +147,9 @@ flowchart TD
     A[Ausleihe aktiv] --> B[Enddaten empfangen]
     B --> C{end_km >= start_km?}
     C -- Fehler --> D[ValueError 400 / Flash]
-    C -- OK --> E[end_time = jetzt]
+    C -- OK --> C2{"(end_km−start_km)×2 <= battery_level?"}
+    C2 -- Fehler --> D
+    C2 -- OK --> E[end_time = jetzt]
     E --> F[Fahrtdauer berechnen]
     F --> G["Preis: 1.50 + 0.35 × Minuten"]
     G --> H["Distanz: end_km − start_km"]

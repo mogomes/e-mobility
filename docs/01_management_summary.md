@@ -26,8 +26,10 @@ Die Webanwendung ist vollständig lauffähig und erfüllt alle gestellten Anford
 - Registrierung und Login mit Rollen (Fahrgast / Anbieter)
 - Interaktive Karte mit Echtzeit-Fahrzeugstandorten (OpenStreetMap)
 - QR-Code-basierte Entriegelung und minutengenaue Abrechnung
+- Akkustand-Validierung: Ausleihe wird verweigert, wenn die Fahrt mehr Akku erfordern würde als vorhanden
+- Profilseite für Anbieter: Benutzername und Passwort änderbar
 - RESTful API mit Bearer-Token-Authentifizierung
-- 13 automatisierte pytest-Tests
+- 33 automatisierte pytest-Tests
 
 ## Mehrwert
 

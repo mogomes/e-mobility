@@ -32,6 +32,7 @@
 | FA-03.3 | Startzeitpunkt wird automatisch gesetzt; Endkilometer und Endstandort werden bei Rückgabe erfasst | ✅ umgesetzt |
 | FA-03.4 | Nach Rückgabe wechselt der Fahrzeug-Status zurück zu `available`, Standort wird aktualisiert | ✅ umgesetzt |
 | FA-03.5 | Ausleihe wird verweigert wenn Akkustand < 10 % (Mindestakkustand für sichere Fahrt) | ✅ umgesetzt |
+| FA-03.6 | Rückgabe wird verweigert, wenn die angegebene Distanz (end_km − start_km) mehr als den aktuellen Akkustand verbrauchen würde (2 % pro km); Akkustand kann nicht unter 0 % fallen | ✅ umgesetzt |
 
 ### FA-04 – Abrechnung
 
@@ -74,13 +75,21 @@
 | FA-07.3 | Fahrgast kann E-Mail-Adresse im Profil ändern (Duplikatprüfung) | ✅ umgesetzt |
 | FA-07.4 | Fahrgast kann Passwort im Profil ändern (aktuelles Passwort als Verifikation) | ✅ umgesetzt |
 
-### FA-08 – Stored Procedures (PostgreSQL)
+### FA-08 – Nutzerprofil (Anbieter)
 
 | ID | Beschreibung | Status |
 |---|---|---|
-| FA-08.1 | `sp_start_rental`: Startet eine Ausleihe mit Validierung auf DB-Ebene | ✅ umgesetzt (PostgreSQL) |
-| FA-08.2 | `sp_end_rental`: Beendet eine Ausleihe, berechnet Preis und senkt Akkustand um 2 % / km | ✅ umgesetzt (PostgreSQL) |
-| FA-08.3 | Stored Procedures werden bei App-Start automatisch auf PostgreSQL-Datenbanken angelegt | ✅ umgesetzt |
+| FA-08.1 | Anbieter hat eine eigene Profilseite (erreichbar über Navigationsmenü «Profil») | ✅ umgesetzt |
+| FA-08.2 | Anbieter kann Benutzernamen im Profil ändern (mind. 3 Zeichen, Duplikatprüfung) | ✅ umgesetzt |
+| FA-08.3 | Anbieter kann Passwort im Profil ändern (aktuelles Passwort als Verifikation, mind. 8 Zeichen) | ✅ umgesetzt |
+
+### FA-09 – Stored Procedures (PostgreSQL)
+
+| ID | Beschreibung | Status |
+|---|---|---|
+| FA-09.1 | `sp_start_rental`: Startet eine Ausleihe mit Validierung auf DB-Ebene | ✅ umgesetzt (PostgreSQL) |
+| FA-09.2 | `sp_end_rental`: Beendet eine Ausleihe, berechnet Preis und senkt Akkustand um 2 % / km | ✅ umgesetzt (PostgreSQL) |
+| FA-09.3 | Stored Procedures werden bei App-Start automatisch auf PostgreSQL-Datenbanken angelegt | ✅ umgesetzt |
 
 ---
 
