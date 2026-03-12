@@ -51,7 +51,7 @@ db/
 deploy/                # Deployment-Skripte und Konfiguration
 docs/                  # Architektur, API, Testprotokoll, Handbuch
 tests/
-  test_app.py          # 27 automatisierte pytest-Tests
+  test_app.py          # 28 automatisierte pytest-Tests
 ```
 
 ## Datenmodell

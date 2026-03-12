@@ -244,7 +244,7 @@ def seed_demo_data() -> None:
     db.session.flush()
 
     if Rental.query.count() == 0:
-        first_vehicle = Vehicle.query.filter_by(public_id='SC-3001').first() or Vehicle.query.order_by(Vehicle.id.asc()).first()
+        first_vehicle = Vehicle.query.filter_by(public_id='BE-3001').first() or Vehicle.query.order_by(Vehicle.id.asc()).first()
         if first_vehicle is not None:
             historic_rental = Rental(
                 vehicle_id=first_vehicle.id,
@@ -291,6 +291,9 @@ def _relocate_legacy_vehicles_to_bern(provider_id: int) -> None:
         if vehicle.status != VehicleStatus.RENTED.value:
             vehicle.status = VehicleStatus.AVAILABLE.value
 
+MIN_BATTERY_LEVEL = 10  # Mindest-Akkustand in % für eine Ausleihe
+
+
 def start_rental(user: User, vehicle: Vehicle, unlock_code: str | None = None) -> Rental:
     if user.role != UserRole.RIDER.value:
         raise ValueError('Nur Fahrgäste dürfen Fahrzeuge ausleihen.')
@@ -298,6 +301,8 @@ def start_rental(user: User, vehicle: Vehicle, unlock_code: str | None = None) -
         raise ValueError('Bitte zuerst ein Zahlungsmittel hinterlegen.')
     if vehicle.status != VehicleStatus.AVAILABLE.value:
         raise ValueError('Fahrzeug ist derzeit nicht verfügbar.')
+    if vehicle.battery_level < MIN_BATTERY_LEVEL:
+        raise ValueError(f'Akkustand zu niedrig ({vehicle.battery_level} %). Bitte ein anderes Fahrzeug wählen.')
     if unlock_code is None or unlock_code.strip() != vehicle.unlock_code:
         raise ValueError('Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Fahrzeug scannen.')
     active_rental = Rental.query.filter_by(rider_id=user.id, status=RentalStatus.ACTIVE.value).first()

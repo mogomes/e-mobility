@@ -18,6 +18,7 @@ DECLARE
     v_vehicle_code     VARCHAR;
     v_vehicle_lat      NUMERIC(9,6);
     v_vehicle_lon      NUMERIC(9,6);
+    v_vehicle_battery  INTEGER;
     v_payment_method   VARCHAR;
 BEGIN
     -- Zahlungsmittel prüfen
@@ -28,8 +29,8 @@ BEGIN
     END IF;
 
     -- Fahrzeugdaten laden
-    SELECT status, unlock_code, latitude, longitude
-    INTO v_vehicle_status, v_vehicle_code, v_vehicle_lat, v_vehicle_lon
+    SELECT status, unlock_code, latitude, longitude, battery_level
+    INTO v_vehicle_status, v_vehicle_code, v_vehicle_lat, v_vehicle_lon, v_vehicle_battery
     FROM vehicles WHERE id = p_vehicle_id;
 
     IF NOT FOUND THEN
@@ -38,6 +39,11 @@ BEGIN
 
     IF v_vehicle_status <> 'available' THEN
         RAISE EXCEPTION 'Fahrzeug ist derzeit nicht verfügbar.';
+    END IF;
+
+    IF v_vehicle_battery < 10 THEN
+        RAISE EXCEPTION 'Akkustand zu niedrig (%). Bitte ein anderes Fahrzeug wählen.',
+            v_vehicle_battery;
     END IF;
 
     IF p_unlock_code IS NULL OR TRIM(p_unlock_code) <> v_vehicle_code THEN

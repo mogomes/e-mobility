@@ -29,19 +29,20 @@ pytest tests/ -v
 | T-12 | `test_provider_can_create_scooter` | Anbieter legt neues Fahrzeug an (inkl. `vehicle_type`) | HTTP 200, Fahrzeug `SC-9999` in Datenbank vorhanden | ✅ Bestanden |
 | T-13 | `test_rider_can_start_and_end_rental` | Fahrgast startet und beendet Ausleihe mit korrektem QR-Code | Rental `active` → `completed`, `total_price > 0` | ✅ Bestanden |
 | T-14 | `test_battery_drains_after_rental` | Akkustand sinkt nach 5 km Fahrt um 10 % | `battery_level` = Startwert − 10 (min. 0) | ✅ Bestanden |
-| T-15 | `test_rental_rejected_with_wrong_unlock_code` | Ausleihe mit falschem Entriegelungscode | Kein Rental angelegt (`active count == 0`) | ✅ Bestanden |
-| T-16 | `test_profile_page_loads` | Profil-Seite für Fahrgast abrufbar | HTTP 200, Benutzername sichtbar | ✅ Bestanden |
-| T-17 | `test_profile_update_payment` | Zahlungsmittel im Profil ändern | HTTP 200, neues Zahlungsmittel in DB gespeichert | ✅ Bestanden |
-| T-18 | `test_profile_update_email` | E-Mail-Adresse im Profil ändern | HTTP 200, neue E-Mail in DB gespeichert | ✅ Bestanden |
-| T-19 | `test_profile_update_email_duplicate_rejected` | Änderung auf bereits vergbene E-Mail | Flash «bereits vergeben» | ✅ Bestanden |
-| T-20 | `test_profile_update_password` | Passwort im Profil ändern | HTTP 200, neues Passwort gültig | ✅ Bestanden |
-| T-21 | `test_profile_update_password_wrong_current` | Passwortänderung mit falschem aktuellen Passwort | Flash «Aktuelles Passwort ist falsch» | ✅ Bestanden |
-| T-22 | `test_profile_update_password_mismatch` | Neue Passwörter stimmen nicht überein | Flash «stimmen nicht überein» | ✅ Bestanden |
-| T-23 | `test_api_token_and_vehicle_list` | API-Token beziehen, Fahrzeugliste und Rentals abrufen | Token als JSON, Fahrzeug-/Rental-Liste als Array | ✅ Bestanden |
-| T-24 | `test_api_vehicle_detail` | Detail-Endpunkt `GET /api/vehicles/<id>` inkl. Anbieter | HTTP 200, Felder `public_id`, `battery_level`, `provider` vorhanden | ✅ Bestanden |
-| T-25 | `test_api_rentals_requires_auth` | `GET /api/rentals` ohne Token | HTTP 401, `error: missing_or_invalid_token` | ✅ Bestanden |
-| T-26 | `test_api_invalid_token_rejected` | `GET /api/rentals` mit ungültigem Bearer-Token | HTTP 401 | ✅ Bestanden |
-| T-27 | `test_api_invalid_credentials_rejected` | `POST /api/token` mit falschem Passwort | HTTP 401, `error: invalid_credentials` | ✅ Bestanden |
+| T-15 | `test_rental_rejected_when_battery_too_low` | Ausleihe mit Fahrzeug < 10 % Akku | Kein Rental angelegt, Flash «Akkustand zu niedrig» | ✅ Bestanden |
+| T-16 | `test_rental_rejected_with_wrong_unlock_code` | Ausleihe mit falschem Entriegelungscode | Kein Rental angelegt (`active count == 0`) | ✅ Bestanden |
+| T-17 | `test_profile_page_loads` | Profil-Seite für Fahrgast abrufbar | HTTP 200, Benutzername sichtbar | ✅ Bestanden |
+| T-18 | `test_profile_update_payment` | Zahlungsmittel im Profil ändern | HTTP 200, neues Zahlungsmittel in DB gespeichert | ✅ Bestanden |
+| T-19 | `test_profile_update_email` | E-Mail-Adresse im Profil ändern | HTTP 200, neue E-Mail in DB gespeichert | ✅ Bestanden |
+| T-20 | `test_profile_update_email_duplicate_rejected` | Änderung auf bereits vergebene E-Mail | Flash «bereits vergeben» | ✅ Bestanden |
+| T-21 | `test_profile_update_password` | Passwort im Profil ändern | HTTP 200, neues Passwort gültig | ✅ Bestanden |
+| T-22 | `test_profile_update_password_wrong_current` | Passwortänderung mit falschem aktuellen Passwort | Flash «Aktuelles Passwort ist falsch» | ✅ Bestanden |
+| T-23 | `test_profile_update_password_mismatch` | Neue Passwörter stimmen nicht überein | Flash «stimmen nicht überein» | ✅ Bestanden |
+| T-24 | `test_api_token_and_vehicle_list` | API-Token beziehen, Fahrzeugliste und Rentals abrufen | Token als JSON, Fahrzeug-/Rental-Liste als Array | ✅ Bestanden |
+| T-25 | `test_api_vehicle_detail` | Detail-Endpunkt `GET /api/vehicles/<id>` inkl. Anbieter | HTTP 200, Felder `public_id`, `battery_level`, `provider` vorhanden | ✅ Bestanden |
+| T-26 | `test_api_rentals_requires_auth` | `GET /api/rentals` ohne Token | HTTP 401, `error: missing_or_invalid_token` | ✅ Bestanden |
+| T-27 | `test_api_invalid_token_rejected` | `GET /api/rentals` mit ungültigem Bearer-Token | HTTP 401 | ✅ Bestanden |
+| T-28 | `test_api_invalid_credentials_rejected` | `POST /api/token` mit falschem Passwort | HTTP 401, `error: invalid_credentials` | ✅ Bestanden |
 
 ---
 

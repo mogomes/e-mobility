@@ -31,6 +31,7 @@
 | FA-03.2 | Nur ein aktives Rental pro Fahrgast gleichzeitig möglich | ✅ umgesetzt |
 | FA-03.3 | Startzeitpunkt wird automatisch gesetzt; Endkilometer und Endstandort werden bei Rückgabe erfasst | ✅ umgesetzt |
 | FA-03.4 | Nach Rückgabe wechselt der Fahrzeug-Status zurück zu `available`, Standort wird aktualisiert | ✅ umgesetzt |
+| FA-03.5 | Ausleihe wird verweigert wenn Akkustand < 10 % (Mindestakkustand für sichere Fahrt) | ✅ umgesetzt |
 
 ### FA-04 – Abrechnung
 

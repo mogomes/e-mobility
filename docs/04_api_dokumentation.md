@@ -2,10 +2,60 @@
 
 Die RESTful API ist unter dem Pfad `/api` erreichbar. Alle Endpunkte liefern und akzeptieren JSON. Endpunkte mit dem Hinweis 🔒 erfordern eine Authentifizierung via Bearer-Token.
 
+Der Zugriff ist vollständig **ohne Browser** möglich — via `curl`, HTTPie, Postman oder jedem anderen HTTP-Client.
+
 **Basis-URL:**
 ```
 http://YOUR_PUBLIC_IP_OR_DOMAIN/api
 ```
+
+---
+
+## Schnellstart ohne Browser (curl / Postman)
+
+Die folgenden drei Schritte zeigen den vollständigen API-Workflow ohne Browser.
+
+### Schritt 1 – Token beziehen
+```bash
+curl -s -X POST http://localhost:8000/api/token \
+  -H "Content-Type: application/json" \
+  -d '{"username": "rider1", "password": "Rider123!"}' | python -m json.tool
+```
+Antwort:
+```json
+{ "token": "a3f9c2e1b7d4...", "role": "rider" }
+```
+
+### Schritt 2 – Fahrzeuge ohne Authentifizierung abrufen
+```bash
+curl -s http://localhost:8000/api/vehicles | python -m json.tool
+```
+
+### Schritt 3 – Ausleihe starten und beenden (mit Token)
+```bash
+# Token in Variable speichern
+TOKEN=$(curl -s -X POST http://localhost:8000/api/token \
+  -H "Content-Type: application/json" \
+  -d '{"username": "rider1", "password": "Rider123!"}' | python -c "import sys,json; print(json.load(sys.stdin)['token'])")
+
+# Ausleihe starten (Fahrzeug ID 1, Entriegelungscode QR-3001)
+curl -s -X POST http://localhost:8000/api/rentals/start/1 \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"unlock_code": "QR-3001"}' | python -m json.tool
+
+# Ausleihe beenden (rental_id aus der Antwort oben einsetzen)
+curl -s -X POST http://localhost:8000/api/rentals/end/1 \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"end_km": 3.5, "latitude": 46.9479, "longitude": 7.4431}' | python -m json.tool
+```
+
+### Postman-Konfiguration
+1. Neue Collection «e-mobility» erstellen
+2. Variable `base_url` = `http://localhost:8000` und `token` = *(nach Login befüllen)* anlegen
+3. `POST /api/token` ausführen, Token aus Antwort in Variable `token` kopieren
+4. Für geschützte Endpunkte: Tab **Authorization** → **Bearer Token** → `{{token}}`
 
 ---
 
@@ -242,6 +292,7 @@ curl -X POST http://YOUR_HOST/api/rentals/start/1 \
 ```json
 { "error": "Ungültiger Entriegelungscode (QR-Code). Bitte den Code am Fahrzeug scannen." }
 { "error": "Fahrzeug ist derzeit nicht verfügbar." }
+{ "error": "Akkustand zu niedrig (7 %). Bitte ein anderes Fahrzeug wählen." }
 { "error": "Bitte zuerst ein Zahlungsmittel hinterlegen." }
 { "error": "Es existiert bereits eine aktive Ausleihe." }
 { "error": "Nur Fahrgäste dürfen Fahrzeuge ausleihen." }

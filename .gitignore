@@ -12,6 +12,7 @@ venv/
 .mypy_cache/
 .coverage
 htmlcov/
+.claude
 
 # Umgebung / Geheimnisse
 .env

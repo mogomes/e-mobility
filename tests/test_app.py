@@ -213,6 +213,26 @@ def test_battery_drains_after_rental(client, rider_credentials, app):
         assert vehicle.battery_level == max(0, battery_before - expected_drain)
 
 
+def test_rental_rejected_when_battery_too_low(client, rider_credentials, app):
+    """Ausleihe schlägt fehl wenn der Akkustand unter 10 % liegt."""
+    login(client, rider_credentials['username'], rider_credentials['password'])
+    with app.app_context():
+        scooter = Vehicle.query.filter_by(status='available').first()
+        scooter.battery_level = 5
+        db.session.commit()
+        vehicle_id = scooter.id
+        unlock_code = scooter.unlock_code
+    response = client.post(
+        f'/rentals/start/{vehicle_id}',
+        data={'unlock_code': unlock_code},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        assert Rental.query.filter_by(status='active').count() == 0
+    assert 'Akkustand zu niedrig'.encode('utf-8') in response.data
+
+
 def test_rental_rejected_with_wrong_unlock_code(client, rider_credentials, app):
     """Ausleihe schlägt fehl wenn der Entriegelungscode falsch ist."""
     login(client, rider_credentials['username'], rider_credentials['password'])

@@ -89,6 +89,7 @@ Nach dem Login erscheint das persönliche Dashboard. Die Ansicht ist rollenabhä
 **Fehlermöglichkeiten:**
 - Falscher Entriegelungscode → Fehlermeldung, keine Ausleihe
 - Fahrzeug bereits ausgeliehen → Fehlermeldung
+- Akkustand unter 10 % → Fehlermeldung «Akkustand zu niedrig», bitte anderes Fahrzeug wählen
 - Kein Zahlungsmittel hinterlegt → Fehlermeldung mit Hinweis auf Profileinstellung
 
 ---
@@ -108,9 +109,31 @@ Gesamtpreis = CHF 1.50 (Basis) + CHF 0.35 × Fahrtdauer in Minuten
 
 Beispiel: 20 Minuten → CHF 1.50 + CHF 7.00 = **CHF 8.50**
 
+> **Akkuabbau:** Nach jeder Fahrt sinkt der Akkustand des Fahrzeugs automatisch um **2 % pro gefahrenen km**. Bei 5 km Fahrt = −10 %. Fahrzeuge mit weniger als 10 % Akkustand können nicht mehr ausgeliehen werden.
+
 ---
 
-## 6. Flotte verwalten (Anbieter)
+## 6. Profil und Einstellungen (Fahrgast)
+
+Die Profilseite ist unter `http://YOUR_HOST/profile/` erreichbar (Link «Profil» in der Navigation).
+
+### Zahlungsmittel ändern
+Im Abschnitt «Zahlungsmittel» das gewünschte Zahlungsmittel eingeben (z. B. `Mastercard **** 5678`) und «Speichern» klicken. Ohne Zahlungsmittel ist keine Ausleihe möglich.
+
+### E-Mail-Adresse ändern
+Neue E-Mail-Adresse eingeben und «Speichern» klicken. Die neue Adresse muss eindeutig sein — eine bereits verwendete E-Mail wird abgewiesen.
+
+### Passwort ändern
+1. Aktuelles Passwort eingeben (als Verifikation)
+2. Neues Passwort und Bestätigung eingeben (mindestens 8 Zeichen)
+3. «Passwort ändern» klicken
+
+### Fahrthistorie
+Auf der Profilseite sind **alle eigenen abgeschlossenen und aktiven Fahrten** aufgelistet, mit Fahrzeug, Strecke, Preis und Zeitstempel.
+
+---
+
+## 7. Flotte verwalten (Anbieter)
 
 Die Flottenverwaltung ist unter `http://YOUR_HOST/providers/vehicles` erreichbar (Direktlink im Navigationsmenü).
 
@@ -136,13 +159,35 @@ Jedes Fahrzeug in der Flottenliste hat ein eingebettetes Bearbeitungsformular in
 
 ---
 
-## 7. API-Schlüssel verwenden
+## 8. API-Zugriff ohne Browser (curl / Postman)
 
-Der API-Schlüssel wird im Dashboard auf der Token-Karte angezeigt. Er wird als Bearer-Token im `Authorization`-Header mitgegeben:
+Die API ist vollständig ohne Browser nutzbar. Alle Daten — insbesondere die Fahrzeugflotte — lassen sich direkt per `curl`, HTTPie oder Postman abrufen und verwalten.
+
+### Authentifizierung (Token beziehen)
 
 ```bash
-curl http://YOUR_HOST/api/rentals \
-  -H "Authorization: Bearer IHR_TOKEN_HIER"
+curl -s -X POST http://YOUR_HOST/api/token \
+  -H "Content-Type: application/json" \
+  -d '{"username": "rider1", "password": "Rider123!"}'
 ```
 
-Eine vollständige Beschreibung aller API-Endpunkte befindet sich im Dokument [04_api_dokumentation.md](04_api_dokumentation.md).
+Antwort: `{ "token": "...", "role": "rider" }`
+
+### Fahrzeuge ohne Login abrufen
+
+```bash
+curl -s http://YOUR_HOST/api/vehicles | python -m json.tool
+```
+
+### Ausleihe starten (mit Token)
+
+```bash
+curl -s -X POST http://YOUR_HOST/api/rentals/start/1 \
+  -H "Authorization: Bearer IHR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"unlock_code": "QR-3001"}'
+```
+
+> **Hinweis:** Der API-Schlüssel wird im Dashboard auf der Token-Karte angezeigt und kann direkt kopiert werden.
+
+Eine vollständige Beschreibung aller API-Endpunkte inkl. Postman-Konfiguration befindet sich im Dokument [04_api_dokumentation.md](04_api_dokumentation.md).
