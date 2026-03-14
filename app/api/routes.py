@@ -87,7 +87,7 @@ def token():
 
 @api_bp.route('/vehicles', methods=['GET'])
 def vehicles():
-    vehicles = Vehicle.query.order_by(Vehicle.id.asc()).all()
+    vehicles = Vehicle.query.filter(Vehicle.status != 'maintenance').order_by(Vehicle.id.asc()).all()
     return jsonify([serialize_vehicle(v) for v in vehicles])
 
 

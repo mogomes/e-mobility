@@ -9,7 +9,7 @@ Webplattform für den Verleih von E-Fahrzeugen in Bern. Entwickelt als Lernproje
 - Ausleihe und Rückgabe mit automatischer Preisberechnung; **Akkuabbau −2 % pro km**
 - **Akkugrenze:** Rückgabe mit unmöglicher Distanz (mehr Akku nötig als vorhanden) wird verweigert
 - Fahrgast-Profil: Zahlungsmittel, E-Mail und Passwort ändern, vollständige Fahrthistorie
-- **Anbieter-Profil:** Benutzername und Passwort änderbar
+- **Anbieter-Profil:** Benutzername und Passwort änderbar; vollständige Ausleihenhistorie der eigenen Flotte
 - Anbieter-Name wird pro Fahrzeug auf Start- und Dashboardseite angezeigt
 - Interaktive Kartenansicht (Leaflet.js) mit allen 20 Fahrzeugen in Bern
 - RESTful API mit Token-Authentifizierung und `POST /api/register` (inkl. Duplikat-Fehlercodes)
@@ -53,7 +53,7 @@ db/
 deploy/                # Deployment-Skripte und Konfiguration
 docs/                  # Architektur, API, Testprotokoll, Handbuch
 tests/
-  test_app.py          # 33 automatisierte pytest-Tests
+  test_app.py          # 12 automatisierte pytest-Tests
 ```
 
 ## Datenmodell
@@ -226,7 +226,8 @@ curl -X POST http://YOUR_HOST/api/token \
 | Methode | Endpunkt | Auth | Beschreibung |
 |---------|----------|------|-------------|
 | POST | `/api/token` | – | Token beziehen |
-| GET | `/api/vehicles` | – | Alle Fahrzeuge |
+| POST | `/api/register` | – | Neuen Benutzer registrieren |
+| GET | `/api/vehicles` | – | Fahrzeuge (ohne Wartung) |
 | GET | `/api/vehicles/<id>` | – | Einzelnes Fahrzeug |
 | GET | `/api/provider/vehicles` | Provider | Eigene Fahrzeugflotte |
 | GET | `/api/rentals` | Rider/Provider | Eigene Ausleihen |
@@ -241,7 +242,7 @@ Vollständige API-Dokumentation: [docs/04_api_dokumentation.md](docs/04_api_doku
 pytest
 ```
 
-Die 33 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Fahrzeug-Anlage, Ausleihe, Rückgabe, Akkugrenze, Anbieter-Profil sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
+Die 12 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Fahrzeug-Anlage, Ausleihe, Rückgabe, Akkugrenze sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
 
 Vollständiges Testprotokoll: [docs/06_testprotokoll.md](docs/06_testprotokoll.md)
 
@@ -263,4 +264,4 @@ Vollständiges Testprotokoll: [docs/06_testprotokoll.md](docs/06_testprotokoll.m
 | [docs/03_benutzerhandbuch.md](docs/03_benutzerhandbuch.md) | Benutzerhandbuch für Rider und Provider |
 | [docs/04_api_dokumentation.md](docs/04_api_dokumentation.md) | Vollständige REST-API-Referenz mit Beispielen |
 | [docs/05_systemarchitektur.md](docs/05_systemarchitektur.md) | Architekturentscheid, Schichtenmodell, ERD |
-| [docs/06_testprotokoll.md](docs/06_testprotokoll.md) | Testprotokoll mit allen 33 Testfällen |
+| [docs/06_testprotokoll.md](docs/06_testprotokoll.md) | Testprotokoll mit 12 automatisierten und 6 manuellen Tests |

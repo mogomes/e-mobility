@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
-from ..models import Rental, Vehicle, UserRole
+from ..models import Rental, Vehicle, UserRole, VehicleStatus
 
 
 main_bp = Blueprint('main', __name__)
@@ -23,7 +23,7 @@ def serialize_vehicle_map(scooter: Vehicle) -> dict:
 
 @main_bp.route('/')
 def index():
-    scooters = Vehicle.query.order_by(Vehicle.id.asc()).all()
+    scooters = Vehicle.query.filter(Vehicle.status != VehicleStatus.MAINTENANCE.value).order_by(Vehicle.id.asc()).all()
     return render_template('main/index.html', scooters=scooters, map_scooters=[serialize_vehicle_map(s) for s in scooters])
 
 
@@ -34,7 +34,7 @@ def dashboard():
         scooters = Vehicle.query.filter_by(provider_id=current_user.id).all()
         rentals = Rental.query.join(Vehicle).filter(Vehicle.provider_id == current_user.id).order_by(Rental.id.desc()).limit(10).all()
     else:
-        scooters = Vehicle.query.order_by(Vehicle.id.asc()).all()
+        scooters = Vehicle.query.filter(Vehicle.status != VehicleStatus.MAINTENANCE.value).order_by(Vehicle.id.asc()).all()
         rentals = Rental.query.filter_by(rider_id=current_user.id).order_by(Rental.id.desc()).limit(10).all()
 
     return render_template(

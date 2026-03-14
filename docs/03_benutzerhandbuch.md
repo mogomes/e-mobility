@@ -9,7 +9,7 @@ Für die Prüfung der Anwendung stehen folgende Demo-Benutzer zur Verfügung:
 | Anbieter | `provider1` | `Provider123!` |
 | Fahrgast | `rider1` | `Rider123!` |
 
-Demo-Fahrzeuge und ihre Entriegelungscodes (18 verfügbar, 2 in Wartung):
+Demo-Fahrzeuge und ihre Entriegelungscodes (18 verfügbar, 2 in Wartung — für Fahrgäste ausgeblendet):
 
 | Code | Kennung | Standort | Fahrzeugtyp | Status |
 |---|---|---|---|---|
@@ -34,7 +34,7 @@ Demo-Fahrzeuge und ihre Entriegelungscodes (18 verfügbar, 2 in Wartung):
 | `QR-3019` | BE-3019 | Weissenbühl | 🚐 E-Cargo | Verfügbar |
 | `QR-3020` | BE-3020 | Universität Bern | 🚲 E-Bike | Verfügbar |
 
-> **Hinweis:** Fahrzeuge mit Status *Wartung* sind nicht ausleihbar und zeigen keinen QR-Code.
+> **Hinweis:** Fahrzeuge mit Status *Wartung* sind für Fahrgäste vollständig ausgeblendet (Dashboard, Karte und API). Anbieter sehen alle Fahrzeuge inklusive Wartungsfahrzeuge in ihrer Flottenverwaltung.
 
 ---
 
@@ -67,7 +67,7 @@ Nach dem Login erscheint das persönliche Dashboard. Die Ansicht ist rollenabhä
 
 - **Token-Karte** (oben): zeigt den persönlichen API-Schlüssel für den Zugriff via API-Client.
 - **Karte** (Mitte): interaktive OpenStreetMap-Karte mit den aktuellen Standorten aller Fahrzeuge in Bern.
-- **Verfügbare Fahrzeuge**: Übersicht aller Fahrzeuge mit Typ, Status, Akkustand, QR-Code und Standortkoordinaten. Fahrzeuge mit Status *Verfügbar* können direkt ausgeliehen werden.
+- **Verfügbare Fahrzeuge**: Übersicht aller Fahrzeuge mit Typ, Status, Akkustand, QR-Code und Standortkoordinaten. Fahrzeuge in *Wartung* werden nicht angezeigt. Fahrzeuge mit Status *Verfügbar* können direkt ausgeliehen werden.
 - **Letzte Fahrten**: Ausleihen mit Start- und Endzeitpunkt, Preis und Status.
 
 ### Ansicht Anbieter

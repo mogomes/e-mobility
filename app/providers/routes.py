@@ -4,7 +4,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..models import User, Vehicle, VehicleStatus, UserRole, VehicleType
+from ..models import User, Vehicle, VehicleStatus, UserRole, VehicleType, Rental
 
 
 providers_bp = Blueprint('providers', __name__)
@@ -84,7 +84,14 @@ def delete_vehicle(vehicle_id):
 @login_required
 def profile():
     ensure_provider()
-    return render_template('providers/profile.html')
+    rentals = (
+        Rental.query
+        .join(Vehicle)
+        .filter(Vehicle.provider_id == current_user.id)
+        .order_by(Rental.id.desc())
+        .all()
+    )
+    return render_template('providers/profile.html', rentals=rentals)
 
 
 @providers_bp.route('/profile/username', methods=['POST'])

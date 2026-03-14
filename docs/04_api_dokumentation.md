@@ -142,7 +142,7 @@ curl -X POST http://YOUR_HOST/api/token \
 
 ### GET /api/vehicles
 
-Alle Fahrzeuge auflisten. Kein Token erforderlich.
+Alle verfügbaren und ausgeliehenen Fahrzeuge auflisten (Fahrzeuge mit Status *Wartung* werden ausgeblendet). Kein Token erforderlich.
 
 **Request:**
 ```bash
@@ -355,7 +355,7 @@ curl -X POST http://YOUR_HOST/api/rentals/end/5 \
 |---|---|---|---|
 | POST | `/api/register` | – | Neuen Benutzer registrieren |
 | POST | `/api/token` | – | Token beziehen |
-| GET | `/api/vehicles` | – | Alle Fahrzeuge inkl. Anbieter |
+| GET | `/api/vehicles` | – | Fahrzeuge (ohne Wartung) inkl. Anbieter |
 | GET | `/api/vehicles/<id>` | – | Fahrzeug-Details inkl. Anbieter |
 | GET | `/api/provider/vehicles` | 🔒 Provider | Eigene Flotte |
 | GET | `/api/rentals` | 🔒 | Eigene Ausleihen |

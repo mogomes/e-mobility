@@ -21,6 +21,7 @@
 | FA-02.3 | Anbieter können eigene Fahrzeuge löschen | ✅ umgesetzt |
 | FA-02.4 | Jedes Fahrzeug erhält einen eindeutigen Entriegelungscode (`unlock_code`) | ✅ umgesetzt |
 | FA-02.5 | Fahrzeug-Status: `available`, `rented`, `maintenance` | ✅ umgesetzt |
+| FA-02.7 | Fahrzeuge mit Status `maintenance` sind für Fahrgäste vollständig ausgeblendet (Dashboard, Karte, API); Anbieter sehen alle Fahrzeuge inkl. Wartung | ✅ umgesetzt |
 | FA-02.6 | Fahrzeugtypen: `e_scooter` 🛴, `e_bike` 🚲, `e_cargo` 🚐 | ✅ umgesetzt |
 
 ### FA-03 – Ausleihe und Rückgabe (Fahrgast)
@@ -50,7 +51,7 @@
 | ID | Beschreibung | Status |
 |---|---|---|
 | FA-05.1 | Token-basierte Authentifizierung via `POST /api/token` (Bearer-Token) | ✅ umgesetzt |
-| FA-05.2 | Öffentliche Fahrzeugliste ohne Authentifizierung (`GET /api/vehicles`) inkl. Anbieter-Name | ✅ umgesetzt |
+| FA-05.2 | Öffentliche Fahrzeugliste ohne Authentifizierung (`GET /api/vehicles`) inkl. Anbieter-Name; Wartungsfahrzeuge werden ausgeblendet | ✅ umgesetzt |
 | FA-05.3 | Detail-Abfrage einzelner Fahrzeuge (`GET /api/vehicles/<id>`) — Felder `vehicle_type` + `provider` enthalten | ✅ umgesetzt |
 | FA-05.4 | Ausleihe starten und beenden per API (`POST /api/rentals/start/<id>`, `POST /api/rentals/end/<id>`) | ✅ umgesetzt |
 | FA-05.5 | Ausleihen des angemeldeten Nutzers abrufen (`GET /api/rentals`) | ✅ umgesetzt |
@@ -82,6 +83,7 @@
 | FA-08.1 | Anbieter hat eine eigene Profilseite (erreichbar über Navigationsmenü «Profil») | ✅ umgesetzt |
 | FA-08.2 | Anbieter kann Benutzernamen im Profil ändern (mind. 3 Zeichen, Duplikatprüfung) | ✅ umgesetzt |
 | FA-08.3 | Anbieter kann Passwort im Profil ändern (aktuelles Passwort als Verifikation, mind. 8 Zeichen) | ✅ umgesetzt |
+| FA-08.4 | Anbieter sieht im Profil die vollständige Ausleihenhistorie aller Fahrzeuge der eigenen Flotte | ✅ umgesetzt |
 
 ### FA-09 – Stored Procedures (PostgreSQL)
 

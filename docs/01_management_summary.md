@@ -8,7 +8,7 @@ Im Rahmen der Praxisarbeit DBWE.TA1A.PA wurde eine internetfähige Webanwendung 
 
 | Komponente | Gewählte Technologie |
 |---|---|
-| Programmiersprache | Python 3.12 |
+| Programmiersprache | Python 3.13 |
 | Web-Framework | Flask 3.1 mit Blueprints |
 | Datenbank | PostgreSQL 16 |
 | ORM | Flask-SQLAlchemy 3.1 |
@@ -27,9 +27,10 @@ Die Webanwendung ist vollständig lauffähig und erfüllt alle gestellten Anford
 - Interaktive Karte mit Echtzeit-Fahrzeugstandorten (OpenStreetMap)
 - QR-Code-basierte Entriegelung und minutengenaue Abrechnung
 - Akkustand-Validierung: Ausleihe wird verweigert, wenn die Fahrt mehr Akku erfordern würde als vorhanden
-- Profilseite für Anbieter: Benutzername und Passwort änderbar
+- Profilseite für Anbieter: Benutzername und Passwort änderbar; Ausleihenhistorie der eigenen Flotte
+- Fahrzeuge in Wartung sind für Fahrgäste vollständig ausgeblendet (Dashboard, Karte, API)
 - RESTful API mit Bearer-Token-Authentifizierung
-- 33 automatisierte pytest-Tests
+- 12 automatisierte pytest-Tests
 
 ## Mehrwert
 

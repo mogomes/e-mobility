@@ -19,7 +19,7 @@ Die Geschäftslogik (Ausleihe starten/beenden, Preisberechnung, Validierungen) i
 | `main` | `/` | Startseite, Dashboard |
 | `auth` | `/auth` | Registrierung, Login, Logout |
 | `profile` | `/profile` | Nutzerprofil (Fahrgast): Zahlungsmittel, E-Mail, Passwort, Fahrthistorie |
-| `providers` | `/providers` | Fahrzeugverwaltung + Anbieter-Profil (Benutzername, Passwort) |
+| `providers` | `/providers` | Fahrzeugverwaltung + Anbieter-Profil (Benutzername, Passwort, Ausleihenhistorie) |
 | `rentals` | `/rentals` | Start und Ende von Ausleihen (Web) |
 | `api` | `/api` | RESTful API-Endpunkte |
 

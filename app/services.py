@@ -267,14 +267,11 @@ def seed_demo_data() -> None:
 
 
 def _ensure_bern_vehicles(provider_id: int) -> None:
-    # Alle bestehenden Ausleihen und Fahrzeuge löschen und neu anlegen
-    Rental.query.delete()
-    Vehicle.query.delete()
-    db.session.flush()
-
+    existing_ids = {v.public_id for v in Vehicle.query.with_entities(Vehicle.public_id).all()}
     for vehicle_data in BERN_VEHICLES:
-        vehicle = Vehicle(provider_id=provider_id, **vehicle_data)
-        db.session.add(vehicle)
+        if vehicle_data['public_id'] not in existing_ids:
+            vehicle = Vehicle(provider_id=provider_id, **vehicle_data)
+            db.session.add(vehicle)
 
 
 

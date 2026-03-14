@@ -44,4 +44,43 @@
 
 </div>
 
+<!-- Ausleihenhistorie -->
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Ausleihen meiner Flotte</span>
+    <h2>Alle Ausleihen</h2>
+  </div>
+</section>
+
+<div class="grid card-grid">
+  {% for rental in rentals %}
+    <article class="card rental-card">
+      <div class="card-top">
+        <span class="status-badge {{ rental.status }}">{{ status_label(rental.status) }}</span>
+      </div>
+      <h3>{{ rental.vehicle.name }}</h3>
+      <p><strong>Ausleihe Nr.:</strong> {{ rental.id }}</p>
+      <p><strong>Fahrzeug:</strong> {{ rental.vehicle.public_id }}</p>
+      <p><strong>Fahrgast:</strong> {{ rental.rider.username }}</p>
+      <p><strong>Beginn:</strong> {{ rental.start_time.strftime('%d.%m.%Y %H:%M') if rental.start_time else '—' }}</p>
+      <p><strong>Ende:</strong> {{ rental.end_time.strftime('%d.%m.%Y %H:%M') if rental.end_time else '—' }}</p>
+      <p><strong>Strecke:</strong>
+        {% if rental.distance_km is not none %}
+          {{ '%.2f'|format(rental.distance_km|float) }} km
+        {% else %}—{% endif %}
+      </p>
+      <p><strong>Preis:</strong>
+        {% if rental.total_price %}
+          CHF {{ '%.2f'|format(rental.total_price|float) }}
+        {% else %}—{% endif %}
+      </p>
+    </article>
+  {% else %}
+    <article class="card empty-card">
+      <h3>Noch keine Ausleihen</h3>
+      <p>Sobald ein Fahrgast eines deiner Fahrzeuge ausleiht, erscheint die Ausleihe hier.</p>
+    </article>
+  {% endfor %}
+</div>
+
 {% endblock %}
