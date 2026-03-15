@@ -157,8 +157,6 @@ curl -X POST http://YOUR_HOST/api/token \
 | POST | `/api/rentals/start/<vehicle_id>` | Rider | Ausleihe starten |
 | POST | `/api/rentals/end/<rental_id>` | Rider | Ausleihe beenden |
 
-Vollständige API-Dokumentation: [docs/04_api_dokumentation.md](docs/04_api_dokumentation.md)
-
 ## Tests
 
 ```bash
@@ -166,8 +164,6 @@ pytest
 ```
 
 Die 12 automatisierten Tests in [tests/test_app.py](tests/test_app.py) verwenden eine SQLite-In-Memory-Datenbank und prüfen Registrierung, Login, Fahrzeug-Anlage, Ausleihe, Rückgabe, Akkugrenze sowie API-Authentifizierung. Alle Tests laufen erfolgreich durch.
-
-Vollständiges Testprotokoll: [docs/06_testprotokoll.md](docs/06_testprotokoll.md)
 
 ## Datenbankdateien
 
