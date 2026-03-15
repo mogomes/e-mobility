@@ -29,3 +29,6 @@ htmlcov/
 # Build / Artefakte
 *.zip
 *.tar.gz
+
+# Dokus
+docs/

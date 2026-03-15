@@ -56,76 +56,6 @@ tests/
   test_app.py          # 12 automatisierte pytest-Tests
 ```
 
-## Datenmodell
-
-```mermaid
-erDiagram
-    USER ||--o{ VEHICLE : provides
-    USER ||--o{ RENTAL : books
-    VEHICLE ||--o{ RENTAL : used_in
-
-    USER {
-        int id PK
-        string username UK
-        string email UK
-        string password_hash
-        string role
-        string payment_method
-        string api_token UK
-    }
-
-    VEHICLE {
-        int id PK
-        string public_id UK
-        string name
-        string vehicle_type
-        int battery_level
-        decimal latitude
-        decimal longitude
-        string status
-        string unlock_code
-        int provider_id FK
-    }
-
-    RENTAL {
-        int id PK
-        int vehicle_id FK
-        int rider_id FK
-        datetime start_time
-        datetime end_time
-        decimal start_km
-        decimal end_km
-        decimal total_price
-        decimal distance_km
-        string status
-    }
-```
-
-## Demo-Flotte (20 Fahrzeuge in Bern)
-
-| Kennung | Standort | Typ | Status |
-|---------|----------|-----|--------|
-| BE-3001 | Bahnhof Bern | 🛴 E-Scooter | Verfügbar |
-| BE-3002 | Bundesplatz | 🛴 E-Scooter | Verfügbar |
-| BE-3003 | Zytglogge | 🚲 E-Bike | Verfügbar |
-| BE-3004 | Bärengraben | 🚲 E-Bike | Verfügbar |
-| BE-3005 | Rosengarten | 🚐 E-Cargo | Verfügbar |
-| BE-3006 | Marzili | 🛴 E-Scooter | Verfügbar |
-| BE-3007 | Kornhausplatz | 🛴 E-Scooter | Verfügbar |
-| BE-3008 | Münster | 🚲 E-Bike | Verfügbar |
-| BE-3009 | Helvetiaplatz | 🛴 E-Scooter | Verfügbar |
-| BE-3010 | Waisenhausplatz | 🚐 E-Cargo | Verfügbar |
-| BE-3011 | Breitenrain | 🛴 E-Scooter | Verfügbar |
-| BE-3012 | Länggasse | 🚲 E-Bike | Verfügbar |
-| BE-3013 | Bremgartenwald | 🚐 E-Cargo | ⚙️ Wartung |
-| BE-3014 | Burgernziel | 🛴 E-Scooter | Verfügbar |
-| BE-3015 | Viktoriapark | 🚲 E-Bike | Verfügbar |
-| BE-3016 | Köniz Dorf | 🛴 E-Scooter | Verfügbar |
-| BE-3017 | Ostermundigen Zentrum | 🚲 E-Bike | Verfügbar |
-| BE-3018 | Bümpliz Bahnhof | 🛴 E-Scooter | ⚙️ Wartung |
-| BE-3019 | Weissenbühl | 🚐 E-Cargo | Verfügbar |
-| BE-3020 | Universität Bern | 🚲 E-Bike | Verfügbar |
-
 ## Umgebungsvariablen
 
 Datei `.env` im Projektwurzelverzeichnis anlegen (Vorlage: `.env.example`):
@@ -204,13 +134,6 @@ source .venv/bin/activate
 gunicorn -b 0.0.0.0:8000 run:app
 ```
 
-## Demo-Zugänge
-
-| Rolle | Benutzername | Passwort |
-|-------|-------------|----------|
-| Anbieter | `provider1` | `Provider123!` |
-| Fahrgast | `rider1` | `Rider123!` |
-
 ## REST API
 
 Basis-URL: `http://YOUR_HOST/api`
@@ -254,14 +177,3 @@ Vollständiges Testprotokoll: [docs/06_testprotokoll.md](docs/06_testprotokoll.m
 | `db/conf/postgresql.conf` | Projektkonfiguration für PostgreSQL |
 | `db/schema/schema.sql` | Relationales Datenbankschema (DDL) |
 | `db/schema/schema.md` | Beschreibung Tabellen, Schlüssel und Beziehungen |
-
-## Dokumentation
-
-| Dokument | Inhalt |
-|----------|--------|
-| [docs/01_management_summary.md](docs/01_management_summary.md) | Management Summary |
-| [docs/02_anforderungen.md](docs/02_anforderungen.md) | Funktionale und nicht-funktionale Anforderungen |
-| [docs/03_benutzerhandbuch.md](docs/03_benutzerhandbuch.md) | Benutzerhandbuch für Rider und Provider |
-| [docs/04_api_dokumentation.md](docs/04_api_dokumentation.md) | Vollständige REST-API-Referenz mit Beispielen |
-| [docs/05_systemarchitektur.md](docs/05_systemarchitektur.md) | Architekturentscheid, Schichtenmodell, ERD |
-| [docs/06_testprotokoll.md](docs/06_testprotokoll.md) | Testprotokoll mit 12 automatisierten und 6 manuellen Tests |
