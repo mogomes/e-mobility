@@ -12,7 +12,7 @@ Webplattform für den Verleih von E-Fahrzeugen in Bern. Entwickelt als Lernproje
 - **Anbieter-Profil:** Benutzername und Passwort änderbar; vollständige Ausleihenhistorie der eigenen Flotte
 - Anbieter-Name wird pro Fahrzeug auf Start- und Dashboardseite angezeigt
 - Interaktive Kartenansicht (Leaflet.js) mit allen 20 Fahrzeugen in Bern
-- RESTful API mit Token-Authentifizierung und `POST /api/register` (inkl. Duplikat-Fehlercodes)
+- Vollständige RESTful API mit Token-Authentifizierung: CRUD für Fahrzeuge, Mieten und Profilverwaltung; interaktive Swagger-Doku unter `/api/docs/`
 - PostgreSQL **Stored Procedures** `sp_start_rental` / `sp_end_rental` (werden automatisch angelegt)
 - Deployment via Docker Compose oder Gunicorn/Nginx auf Linux
 
@@ -138,24 +138,60 @@ gunicorn -b 0.0.0.0:8000 run:app
 
 Basis-URL: `http://YOUR_HOST/api`
 
-Authentifizierung über Bearer-Token im `Authorization`-Header. Token beziehen:
+Interaktive Dokumentation (Swagger UI): `http://YOUR_HOST/api/docs/`
+
+Alle schreibenden und geschützten Endpunkte erfordern einen Bearer-Token im `Authorization`-Header.
+
+### Token beziehen
 
 ```bash
 curl -X POST http://YOUR_HOST/api/token \
   -H "Content-Type: application/json" \
-  -d '{"username":"rider1","password":"Rider123!"}'
+  -d '{"username":"username","password":"password"}'
 ```
+
+### Authentifizierung
+
+```
+Authorization: Bearer <token>
+```
+
+### Endpunkte
+
+#### Auth
 
 | Methode | Endpunkt | Auth | Beschreibung |
 |---------|----------|------|-------------|
-| POST | `/api/token` | – | Token beziehen |
-| POST | `/api/register` | – | Neuen Benutzer registrieren |
-| GET | `/api/vehicles` | – | Fahrzeuge (ohne Wartung) |
-| GET | `/api/vehicles/<id>` | – | Einzelnes Fahrzeug |
-| GET | `/api/provider/vehicles` | Provider | Eigene Fahrzeugflotte |
-| GET | `/api/rentals` | Rider/Provider | Eigene Ausleihen |
+| POST | `/api/register` | – | Neuen Benutzer registrieren (gibt Token zurück) |
+| POST | `/api/token` | – | Token mit Benutzername/Passwort beziehen |
+
+#### Fahrzeuge
+
+| Methode | Endpunkt | Auth | Beschreibung |
+|---------|----------|------|-------------|
+| GET | `/api/vehicles` | – | Alle Fahrzeuge auflisten (ohne Wartung) |
+| GET | `/api/vehicles/<id>` | – | Einzelnes Fahrzeug abrufen |
+| POST | `/api/vehicles` | Provider | Neues Fahrzeug erstellen |
+| PUT | `/api/vehicles/<id>` | Provider | Fahrzeug aktualisieren |
+| DELETE | `/api/vehicles/<id>` | Provider | Fahrzeug löschen |
+| GET | `/api/provider/vehicles` | Provider | Eigene Fahrzeugflotte auflisten |
+
+#### Mieten
+
+| Methode | Endpunkt | Auth | Beschreibung |
+|---------|----------|------|-------------|
+| GET | `/api/rentals` | Rider/Provider | Eigene Ausleihen abrufen |
 | POST | `/api/rentals/start/<vehicle_id>` | Rider | Ausleihe starten |
 | POST | `/api/rentals/end/<rental_id>` | Rider | Ausleihe beenden |
+
+#### Profil
+
+| Methode | Endpunkt | Auth | Beschreibung |
+|---------|----------|------|-------------|
+| PATCH | `/api/profile/username` | Alle | Benutzernamen ändern |
+| PATCH | `/api/profile/email` | Alle | E-Mail-Adresse ändern |
+| PATCH | `/api/profile/password` | Alle | Passwort ändern |
+| PATCH | `/api/profile/payment` | Rider | Zahlungsmethode ändern |
 
 ## Tests
 

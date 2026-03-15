@@ -19,6 +19,7 @@
           <a href="{{ url_for('main.index') }}" class="brand" aria-label="e-mobility Startseite">
             <img src="{{ url_for('static', filename='img/logo-emobility.svg') }}" alt="e-mobility Logo">
           </a>
+          <a href="/api/docs/" target="_blank" class="nav-api-docs">API Doku</a>
           <nav class="nav-links">
             {% if current_user.is_authenticated %}
               <a href="{{ url_for('main.dashboard') }}">Übersicht</a>
@@ -62,6 +63,7 @@
             <a href="{{ url_for('main.index') }}">Startseite</a>
             <a href="{{ url_for('auth.login') }}">Anmelden</a>
             <a href="{{ url_for('auth.register') }}">Registrieren</a>
+            <a href="/api/docs/" target="_blank">API Doku</a>
           </nav>
         </div>
       </footer>

@@ -1,5 +1,6 @@
 import os
 
+from flasgger import Swagger
 from flask import Flask
 from sqlalchemy import text
 
@@ -36,6 +37,51 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+
+    swagger_config = {
+        'headers': [],
+        'specs': [
+            {
+                'endpoint': 'apispec',
+                'route': '/api/apispec.json',
+                'rule_filter': lambda rule: str(rule).startswith('/api/'),
+                'model_filter': lambda tag: True,
+            }
+        ],
+        'static_url_path': '/flasgger_static',
+        'swagger_ui': True,
+        'specs_route': '/api/docs/',
+        'top_text': (
+            '<a href="/" style="'
+            'display:inline-flex;align-items:center;gap:6px;'
+            'padding:8px 16px;margin:12px 0 0 12px;'
+            'background:#22c55e;color:#fff;border-radius:6px;'
+            'text-decoration:none;font-family:Inter,sans-serif;font-size:14px;font-weight:600;'
+            '">'
+            '&#8592; Zurück zur Startseite'
+            '</a>'
+        ),
+    }
+    swagger_template = {
+        'info': {
+            'title': 'E-Mobility Bern API',
+            'description': 'REST API für das E-Fahrzeug-Verleihsystem Bern',
+            'version': '1.0.0',
+            'contact': {'name': 'E-Mobility Bern'},
+        },
+        'securityDefinitions': {
+            'Bearer': {
+                'type': 'apiKey',
+                'name': 'Authorization',
+                'in': 'header',
+                'description': 'JWT-ähnliches API-Token. Format: **Bearer &lt;token&gt;**',
+            }
+        },
+        'basePath': '/',
+        'consumes': ['application/json'],
+        'produces': ['application/json'],
+    }
+    Swagger(app, config=swagger_config, template=swagger_template)
 
     from .auth.routes import auth_bp
     from .main.routes import main_bp
