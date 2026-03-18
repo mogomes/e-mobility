@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}e-mobility | Fahrzeugtypen verwalten{% endblock %}
+{% block content %}
+
+<section class="dashboard-hero">
+  <div class="hero-copy">
+    <span class="eyebrow">Werkzeuge für Anbieter</span>
+    <h1>Fahrzeugtypen verwalten</h1>
+    <p>Erstelle eigene Fahrzeugtypen zusätzlich zu den Standardtypen (E-Scooter, E-Bike, E-Cargo).</p>
+    <a href="{{ url_for('providers.vehicles') }}" class="btn-secondary" style="display:inline-block;margin-top:.75rem">← Zurück zur Flotte</a>
+  </div>
+</section>
+
+<section class="form-card wide-card">
+  <h2>Neuen Fahrzeugtyp anlegen</h2>
+  <form method="post" class="form-grid">
+    <label>Bezeichnung
+      <input type="text" name="label" id="label-input" placeholder="z.&thinsp;B. E-Roller" required>
+    </label>
+    <label>Schlüssel (intern)
+      <input type="text" name="slug" id="slug-input" placeholder="e_roller" pattern="[a-z0-9_]{1,20}" title="Nur Kleinbuchstaben, Zahlen und Unterstriche, max. 20 Zeichen" required>
+      <small style="color:var(--muted,#64748b)">Nur Kleinbuchstaben, Zahlen und _ — max. 20 Zeichen. Wird automatisch befüllt.</small>
+    </label>
+    <label>Icon
+      <input type="text" name="icon" id="icon-input" placeholder="🛵" maxlength="4" style="font-size:1.5rem;width:5rem">
+    </label>
+    <div class="form-actions">
+      <button type="submit">Fahrzeugtyp speichern</button>
+    </div>
+  </form>
+</section>
+
+<section class="section-headline">
+  <div>
+    <span class="eyebrow">Übersicht</span>
+    <h2>Benutzerdefinierte Fahrzeugtypen</h2>
+  </div>
+</section>
+
+<div class="grid card-grid">
+  {% for ct in custom_types %}
+    <article class="card fleet-card">
+      <div class="scooter-visual" style="font-size:3rem">{{ ct.icon }}</div>
+      <h3 style="margin:.5rem 0 .25rem">{{ ct.label }}</h3>
+      <p style="color:var(--muted,#64748b);font-size:.85rem;margin:0 0 1rem">Schlüssel: <code>{{ ct.slug }}</code></p>
+      <form method="post" action="{{ url_for('providers.delete_vehicle_type', type_id=ct.id) }}">
+        <button type="submit" class="danger">Typ löschen</button>
+      </form>
+    </article>
+  {% else %}
+    <article class="card empty-card">
+      <h3>Noch keine eigenen Typen</h3>
+      <p>Lege oben deinen ersten benutzerdefinierten Fahrzeugtyp an.</p>
+    </article>
+  {% endfor %}
+</div>
+
+<section class="section-headline" style="margin-top:2rem">
+  <div>
+    <span class="eyebrow">Integriert</span>
+    <h2>Standardtypen</h2>
+  </div>
+</section>
+<div class="grid card-grid">
+  <article class="card fleet-card">
+    <div class="scooter-visual" style="font-size:3rem">🛴</div>
+    <h3 style="margin:.5rem 0 .25rem">E-Scooter</h3>
+    <p style="color:var(--muted,#64748b);font-size:.85rem;margin:0">Schlüssel: <code>e_scooter</code></p>
+  </article>
+  <article class="card fleet-card">
+    <div class="scooter-visual" style="font-size:3rem">🚲</div>
+    <h3 style="margin:.5rem 0 .25rem">E-Bike</h3>
+    <p style="color:var(--muted,#64748b);font-size:.85rem;margin:0">Schlüssel: <code>e_bike</code></p>
+  </article>
+  <article class="card fleet-card">
+    <div class="scooter-visual" style="font-size:3rem">🚐</div>
+    <h3 style="margin:.5rem 0 .25rem">E-Cargo</h3>
+    <p style="color:var(--muted,#64748b);font-size:.85rem;margin:0">Schlüssel: <code>e_cargo</code></p>
+  </article>
+</div>
+
+<script>
+  const labelInput = document.getElementById('label-input');
+  const slugInput = document.getElementById('slug-input');
+  labelInput.addEventListener('input', () => {
+    if (!slugInput.dataset.manual) {
+      slugInput.value = labelInput.value
+        .toLowerCase()
+        .replace(/\s+/g, '_')
+        .replace(/[^a-z0-9_]/g, '')
+        .slice(0, 20);
+    }
+  });
+  slugInput.addEventListener('input', () => {
+    slugInput.dataset.manual = '1';
+  });
+</script>
+{% endblock %}

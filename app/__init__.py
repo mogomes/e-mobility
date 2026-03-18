@@ -7,7 +7,7 @@ from sqlalchemy import text
 from config import Config
 
 from .extensions import db, login_manager, migrate
-from .presentation import role_label, status_label, vehicle_type_emoji, vehicle_type_label
+from .presentation import role_label, status_label, vehicle_type_icon, vehicle_type_label
 from .services import seed_demo_data
 
 
@@ -103,7 +103,7 @@ def create_app(test_config=None):
             'status_label': status_label,
             'role_label': role_label,
             'vehicle_type_label': vehicle_type_label,
-            'vehicle_type_emoji': vehicle_type_emoji,
+            'vehicle_type_icon': vehicle_type_icon,
         }
 
     with app.app_context():

@@ -1,4 +1,4 @@
-from .models import RentalStatus, VehicleStatus, UserRole, VehicleType
+from .models import RentalStatus, VehicleStatus, UserRole, VehicleType, CustomVehicleType
 
 
 def status_label(value: str) -> str:
@@ -26,13 +26,19 @@ def vehicle_type_label(value: str) -> str:
         VehicleType.E_BIKE.value: 'E-Bike',
         VehicleType.E_CARGO.value: 'E-Cargo',
     }
-    return mapping.get(value, str(value))
+    if value in mapping:
+        return mapping[value]
+    ct = CustomVehicleType.query.filter_by(slug=value).first()
+    return ct.label if ct else str(value)
 
 
-def vehicle_type_emoji(value: str) -> str:
+def vehicle_type_icon(value: str) -> str:
     mapping = {
         VehicleType.E_SCOOTER.value: '🛴',
         VehicleType.E_BIKE.value: '🚲',
         VehicleType.E_CARGO.value: '🚐',
     }
-    return mapping.get(value, '🛴')
+    if value in mapping:
+        return mapping[value]
+    ct = CustomVehicleType.query.filter_by(slug=value).first()
+    return ct.icon if ct else '🚗'

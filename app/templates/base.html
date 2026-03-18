@@ -25,6 +25,7 @@
               <a href="{{ url_for('main.dashboard') }}">Übersicht</a>
               {% if current_user.role == 'provider' %}
               <a href="{{ url_for('providers.vehicles') }}">E-Fahrzeuge</a>
+              <a href="{{ url_for('providers.vehicle_types') }}">Fahrzeugtypen</a>
               <a href="{{ url_for('providers.profile') }}">Profil</a>
               {% endif %}
               {% if current_user.role == 'rider' %}

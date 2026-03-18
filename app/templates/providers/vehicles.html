@@ -6,7 +6,8 @@
   <div class="hero-copy">
     <span class="eyebrow">Werkzeuge für Anbieter</span>
     <h1>Flotte in Bern verwalten</h1>
-    <p>Erstelle neue Fahrzeuge (E-Scooter, E-Bike, E-Cargo), pflege Akkustand, Standort und Verfügbarkeit und halte deine Flotte für Bern aktuell.</p>
+    <p>Erstelle neue Fahrzeuge, pflege Akkustand, Standort und Verfügbarkeit und halte deine Flotte für Bern aktuell.</p>
+    <a href="{{ url_for('providers.vehicle_types') }}" class="btn-secondary" style="display:inline-block;margin-top:.75rem">Fahrzeugtypen verwalten</a>
   </div>
 </section>
 
@@ -34,6 +35,9 @@
         <option value="{{ vehicle_type.E_SCOOTER.value }}">🛴 E-Scooter</option>
         <option value="{{ vehicle_type.E_BIKE.value }}">🚲 E-Bike</option>
         <option value="{{ vehicle_type.E_CARGO.value }}">🚐 E-Cargo</option>
+        {% for ct in custom_types %}
+          <option value="{{ ct.slug }}">{{ ct.icon }} {{ ct.label }}</option>
+        {% endfor %}
       </select>
     </label>
     <label>Akkustand in %
@@ -78,7 +82,7 @@
         <div class="battery-bar-fill{% if scooter.battery_level < 20 %} critical{% elif scooter.battery_level < 40 %} low{% endif %}"
              style="width: {{ scooter.battery_level }}%"></div>
       </div>
-      <div class="scooter-visual">{{ vehicle_type_emoji(scooter.vehicle_type) }}</div>
+      <div class="scooter-visual">{{ vehicle_type_icon(scooter.vehicle_type) }}</div>
       <p class="vehicle-type-label">{{ vehicle_type_label(scooter.vehicle_type) }}</p>
       <form method="post" action="{{ url_for('providers.update_vehicle', vehicle_id=scooter.id) }}">
         <label>Bezeichnung
@@ -89,6 +93,9 @@
             <option value="e_scooter" {% if scooter.vehicle_type == 'e_scooter' %}selected{% endif %}>🛴 E-Scooter</option>
             <option value="e_bike"    {% if scooter.vehicle_type == 'e_bike'    %}selected{% endif %}>🚲 E-Bike</option>
             <option value="e_cargo"   {% if scooter.vehicle_type == 'e_cargo'   %}selected{% endif %}>🚐 E-Cargo</option>
+            {% for ct in custom_types %}
+              <option value="{{ ct.slug }}" {% if scooter.vehicle_type == ct.slug %}selected{% endif %}>{{ ct.icon }} {{ ct.label }}</option>
+            {% endfor %}
           </select>
         </label>
         <label>Akkustand in %

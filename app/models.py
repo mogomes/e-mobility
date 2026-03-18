@@ -34,6 +34,16 @@ class VehicleType(str, Enum):
     E_CARGO = 'e_cargo'
 
 
+class CustomVehicleType(db.Model):
+    __tablename__ = 'custom_vehicle_types'
+
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(20), unique=True, nullable=False)
+    label = db.Column(db.String(60), nullable=False)
+    icon = db.Column(db.String(8), nullable=False, default='🛵')
+    created_at = db.Column(db.DateTime(timezone=True), default=utcnow, nullable=False)
+
+
 class VehicleStatus(str, Enum):
     AVAILABLE = 'available'
     RENTED = 'rented'

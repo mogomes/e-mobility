@@ -80,7 +80,7 @@
         <div class="battery-bar-fill{% if scooter.battery_level < 20 %} critical{% elif scooter.battery_level < 40 %} low{% endif %}"
              style="width: {{ scooter.battery_level }}%"></div>
       </div>
-      <div class="scooter-visual">{{ vehicle_type_emoji(scooter.vehicle_type) }}</div>
+      <div class="scooter-visual">{{ vehicle_type_icon(scooter.vehicle_type) }}</div>
       <p class="vehicle-type-label">{{ vehicle_type_label(scooter.vehicle_type) }}</p>
       <h3>{{ scooter.name }}</h3>
       <p><strong>Kennung:</strong> {{ scooter.public_id }}</p>

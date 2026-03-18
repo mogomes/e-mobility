@@ -4,7 +4,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 
 from ..extensions import db
-from ..models import User, Vehicle, VehicleStatus, UserRole, VehicleType, Rental
+from ..models import User, Vehicle, VehicleStatus, UserRole, VehicleType, Rental, CustomVehicleType
 
 
 providers_bp = Blueprint('providers', __name__)
@@ -50,7 +50,8 @@ def vehicles():
         return redirect(url_for('providers.vehicles'))
 
     vehicles = Vehicle.query.filter_by(provider_id=current_user.id).order_by(Vehicle.id.desc()).all()
-    return render_template('providers/vehicles.html', scooters=vehicles, scooter_status=VehicleStatus, vehicle_type=VehicleType, map_scooters=[serialize_vehicle_map(v) for v in vehicles])
+    custom_types = CustomVehicleType.query.order_by(CustomVehicleType.id).all()
+    return render_template('providers/vehicles.html', scooters=vehicles, scooter_status=VehicleStatus, vehicle_type=VehicleType, custom_types=custom_types, map_scooters=[serialize_vehicle_map(v) for v in vehicles])
 
 
 @providers_bp.route('/vehicles/<int:vehicle_id>/update', methods=['POST'])
@@ -78,6 +79,44 @@ def delete_vehicle(vehicle_id):
     db.session.commit()
     flash('Fahrzeug wurde gelöscht.', 'info')
     return redirect(url_for('providers.vehicles'))
+
+
+@providers_bp.route('/vehicle-types', methods=['GET', 'POST'])
+@login_required
+def vehicle_types():
+    ensure_provider()
+
+    if request.method == 'POST':
+        slug = request.form.get('slug', '').strip().lower().replace(' ', '_')[:20]
+        label = request.form.get('label', '').strip()
+        icon = request.form.get('icon', '🚗').strip() or '🚗'
+
+        if not slug or not label:
+            flash('Schlüssel und Bezeichnung sind Pflichtfelder.', 'danger')
+        elif CustomVehicleType.query.filter_by(slug=slug).first():
+            flash('Dieser Typ-Schlüssel existiert bereits.', 'danger')
+        elif any(slug == t.value for t in VehicleType):
+            flash('Dieser Schlüssel ist bereits als Standardtyp vergeben.', 'danger')
+        else:
+            ct = CustomVehicleType(slug=slug, label=label, icon=icon)
+            db.session.add(ct)
+            db.session.commit()
+            flash(f'Fahrzeugtyp „{label}" wurde erstellt.', 'success')
+        return redirect(url_for('providers.vehicle_types'))
+
+    custom_types = CustomVehicleType.query.order_by(CustomVehicleType.id).all()
+    return render_template('providers/vehicle_types.html', custom_types=custom_types)
+
+
+@providers_bp.route('/vehicle-types/<int:type_id>/delete', methods=['POST'])
+@login_required
+def delete_vehicle_type(type_id):
+    ensure_provider()
+    ct = db.get_or_404(CustomVehicleType, type_id)
+    db.session.delete(ct)
+    db.session.commit()
+    flash('Fahrzeugtyp wurde gelöscht.', 'info')
+    return redirect(url_for('providers.vehicle_types'))
 
 
 @providers_bp.route('/profile', methods=['GET'])
